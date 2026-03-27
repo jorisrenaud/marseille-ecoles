@@ -821,7 +821,7 @@
       <div id="dsden-map"></div>
       <div class="map-footer">
         <span class="map-address"><strong>28 boulevard Charles Nédelec</strong> · 13001 Marseille · Face à la gare Saint-Charles</span>
-        <a class="map-link" href="https://www.openstreetmap.org/?mlat=43.3037&mlon=5.3804#map=17/43.3037/5.3804" target="_blank" rel="noopener">Ouvrir dans OSM →</a>
+        <a class="map-link" href="https://www.openstreetmap.org/?mlat=43.3029393&mlon=5.3782730#map=17/43.3029393/5.3782730" target="_blank" rel="noopener">Ouvrir dans OSM →</a>
       </div>
     </div>
 
@@ -1154,7 +1154,7 @@ async function subscribeNewsletter(ev) {
   const script = document.createElement('script');
   script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
   script.onload = function () {
-    const lat = 43.30372, lng = 5.38042;
+    const lat = 43.3029393, lng = 5.3782730;
     const map = L.map('dsden-map', { center:[lat,lng], zoom:16, scrollWheelZoom:false });
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
