@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Non aux fermetures de classes à Marseille</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -640,6 +641,26 @@
     .nl-feedback.ok  { color: #2e7d32; }
     .nl-feedback.err { color: var(--red); }
     @media (max-width: 480px) { .nl-row { grid-template-columns: 1fr; } }
+
+    /* ── NOTICE BAR ── */
+    .notice-bar { background:#1a1a2e; color:#f0ede8; border-bottom:2px solid var(--orange); padding:1rem 2rem; }
+    .notice-inner { max-width:920px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem 2rem; }
+    .notice-title { font-size:.95rem; font-weight:800; color:#fff; white-space:nowrap; }
+    .notice-text { font-size:.85rem; color:#c8c3bb; line-height:1.6; flex:1; min-width:200px; }
+    .notice-slogan { font-size:.9rem; font-weight:800; color:var(--orange); white-space:nowrap; }
+    @media(max-width:600px){ .notice-inner{flex-direction:column;gap:.3rem;} .notice-slogan{margin-top:.2rem;} }
+
+    /* ── MAP DSDEN ── */
+    .map-block { margin-top:1.5rem; max-width:700px; border:1px solid var(--orange-border); border-radius:.6rem; overflow:hidden; }
+    .map-header { background:var(--white); border-bottom:1px solid var(--orange-border); padding:.7rem 1rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap; }
+    .map-header-title { font-size:.88rem; font-weight:700; color:var(--text); flex:1; }
+    .map-header-date { font-size:.78rem; font-weight:700; background:var(--orange); color:white; padding:.2rem .65rem; border-radius:999px; }
+    #dsden-map { height:260px; width:100%; }
+    .map-footer { background:var(--white); border-top:1px solid var(--orange-border); padding:.55rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.5rem; flex-wrap:wrap; }
+    .map-address { font-size:.82rem; color:var(--muted); }
+    .map-address strong { color:var(--text); }
+    .map-link { font-size:.78rem; font-weight:600; color:var(--red); text-decoration:none; white-space:nowrap; }
+    .map-link:hover { text-decoration:underline; }
   </style>
 </head>
 <body>
@@ -647,6 +668,19 @@
 <!-- TOP BANNER -->
 <div class="top-banner">
   <a href="#mobilisation" style="color:white;text-decoration:none;">📅 Les prochaines actions de mobilisation →</a>
+</div>
+
+
+<!-- ══════════ NOTICE ══════════ -->
+<div class="notice-bar">
+  <div class="notice-inner">
+    <p class="notice-title">📣 Restez mobilisés</p>
+    <p class="notice-text">
+      👉 Les modalités d'action seront mises à jour ici tout au long du week-end.
+      🔁 Revenez régulièrement consulter la page et partagez-la autour de vous.
+    </p>
+    <p class="notice-slogan">✊ Ensemble, on pèse plus.</p>
+  </div>
 </div>
 
 <!-- ══════════ HERO ══════════ -->
@@ -784,7 +818,20 @@
       <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
         Haut du boulevard Charles Nedelec, face à la gare Saint-Charles
       </p>
+    
+    <div class="map-block">
+      <div class="map-header">
+        <span class="map-header-title">📍 DSDEN 13 — Direction des services de l'Éducation nationale</span>
+        <span class="map-header-date">Jeudi 2 avril · 8h00</span>
+      </div>
+      <div id="dsden-map"></div>
+      <div class="map-footer">
+        <span class="map-address"><strong>28 boulevard Charles Nédelec</strong> · 13001 Marseille · Face à la gare Saint-Charles</span>
+        <a class="map-link" href="https://www.openstreetmap.org/?mlat=43.3037&mlon=5.3804#map=17/43.3037/5.3804" target="_blank" rel="noopener">Ouvrir dans OSM →</a>
+      </div>
     </div>
+
+</div>
 
     <p style="margin-top:1.2rem;font-weight:600;color:var(--text);">D'ici là, chacun peut agir :</p>
     <ul class="actions-list">
@@ -1106,6 +1153,30 @@ async function subscribeNewsletter(ev) {
     fb.className   = 'nl-feedback err';
   }
 }
+
+
+// ─── CARTE DSDEN ────────────────────────────────────────
+(function initMap() {
+  const script = document.createElement('script');
+  script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+  script.onload = function () {
+    const lat = 43.30372, lng = 5.38042;
+    const map = L.map('dsden-map', { center:[lat,lng], zoom:16, scrollWheelZoom:false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom:19
+    }).addTo(map);
+    const icon = L.divIcon({
+      className:'',
+      html:`<div style="background:#c0392b;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+      iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-38]
+    });
+    L.marker([lat,lng],{icon}).addTo(map)
+      .bindPopup('<strong style="font-size:.9rem">DSDEN 13</strong><br>28 bd Charles Nédelec, 13001 Marseille<br><span style="color:#c0392b;font-weight:600">📅 Jeudi 2 avril · 8h00</span>',{maxWidth:220})
+      .openPopup();
+  };
+  document.head.appendChild(script);
+})();
 
 </script>
 </body>
