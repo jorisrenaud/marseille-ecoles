@@ -8,20 +8,6 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --red:     #c0392b;
-      --red-bg:  #fdf0ee;
-      --red-light: #e8534a;
-      --cream:   #faf8f4;
-      --sand:    #f2ede6;
-      --warm:    #ede8df;
-      --text:    #1c1c1c;
-      --muted:   #6b6560;
-      --accent:  #e05e38;
-      --border:  #ddd8d0;
-      --white:   #ffffff;
-    }
-
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
@@ -65,7 +51,7 @@
       text-transform: uppercase;
       padding: 0.4rem 1rem;
       border-radius: 999px;
-      border: 1px solid #f5c9c5;
+      border: 1px solid var(--primary-light);
       margin-bottom: 1.8rem;
     }
 
@@ -136,7 +122,7 @@
     }
 
     .cta-btn:hover {
-      background: #a93226;
+      background: var(--primary-darker);
       transform: translateY(-1px);
       box-shadow: 0 4px 20px rgba(192,57,43,0.35);
     }
@@ -296,7 +282,7 @@
       color: var(--red);
       padding: 0.15rem 0.5rem;
       border-radius: 999px;
-      border: 1px solid #f5c9c5;
+      border: 1px solid var(--primary-light);
     }
 
     /* ── CTA BOTTOM ── */
@@ -561,9 +547,9 @@
       display: inline-flex;
       align-items: center;
       gap: .5rem;
-      background: #fff3e0;
-      color: #c0392b;
-      border: 1px solid #f5c9a0;
+      background: var(--primary-lighter);
+      color: var(--accent-danger);
+      border: 1px solid var(--primary-light);
       font-size: .8rem;
       font-weight: 700;
       letter-spacing: .06em;
@@ -640,14 +626,14 @@
     .nl-btn:hover { background: var(--blue-dark); }
     .nl-feedback { font-size: .85rem; margin-top: .5rem; min-height: 1.2rem; }
     .nl-feedback.ok  { color: var(--blue-dark); }
-    .nl-feedback.err { color: #c0392b; }
+    .nl-feedback.err { color: var(--accent-danger); }
     @media (max-width: 480px) { .nl-row { grid-template-columns: 1fr; } }
 
     /* ── NOTICE BAR ── */
     .notice-bar { background:#1a1f2e; color:#f0ede8; border-bottom:2px solid var(--blue); padding:1rem 2rem; }
     .notice-inner { max-width:920px; margin:0 auto; display:flex; flex-wrap:wrap; align-items:center; gap:.4rem 2rem; }
     .notice-title { font-size:.95rem; font-weight:800; color:#fff; white-space:nowrap; }
-    .notice-text { font-size:.85rem; color:#c8c3bb; line-height:1.6; flex:1; min-width:200px; }
+    .notice-text { font-size:.85rem; color:var(--text-on-dark); line-height:1.6; flex:1; min-width:200px; }
     .notice-slogan { font-size:.9rem; font-weight:800; color:var(--blue); white-space:nowrap; }
     @media(max-width:600px){ .notice-inner{flex-direction:column;gap:.3rem;} .notice-slogan{margin-top:.2rem;} }
 
@@ -1164,11 +1150,11 @@ async function subscribeNewsletter(ev) {
     }).addTo(map);
     const icon = L.divIcon({
       className:'',
-      html:`<div style="background:#c0392b;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+      html:`<div style="background:var(--accent-danger);width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
       iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-38]
     });
     L.marker([lat,lng],{icon}).addTo(map)
-      .bindPopup('<strong style="font-size:.9rem">DSDEN 13</strong><br>28 bd Charles Nédelec, 13001 Marseille<br><span style="color:#c0392b;font-weight:600">📅 Jeudi 2 avril · 8h00</span>',{maxWidth:220})
+      .bindPopup('<strong style="font-size:.9rem">DSDEN 13</strong><br>28 bd Charles Nédelec, 13001 Marseille<br><span style="color:var(--accent-danger);font-weight:600">📅 Jeudi 2 avril · 8h00</span>',{maxWidth:220})
       .openPopup();
   };
   document.head.appendChild(script);
