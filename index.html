@@ -720,10 +720,6 @@
         <div class="fact-number">8</div>
         <div class="fact-text">écoles classées REP+ touchées — les plus fragiles en premier</div>
       </div>
-      <div class="fact-card">
-        <div class="fact-number">↑</div>
-        <div class="fact-text">Les inscriptions en CP sont en hausse à Roosevelt — on supprime quand même une classe</div>
-      </div>
     </div>
   </div>
 </section>
@@ -733,9 +729,7 @@
   <div class="section-inner">
     <h2>Ce qui se passe</h2>
     <p>
-      L'État a diffusé le projet de nouvelle carte scolaire 2026. Il prévoit la suppression de 45 classes sur Marseille,
-      dont 11 dans le secteur des 4<sup>e</sup>/5<sup>e</sup> arrondissements.
-      L'école Roosevelt est impactée et perd à nouveau une classe, malgré des prévisions d'inscription en hausse pour les CP.
+      L'État a diffusé le projet de nouvelle carte scolaire 2026. Il prévoit la suppression de 45 classes sur Marseille.
     </p>
     <blockquote>
       « Ces mesures sont la conséquence directe du budget d'austérité voté à l'Assemblée nationale en février dernier. »
@@ -967,7 +961,7 @@ const schools = [
   { arr: "13015", nom: "N.D LIMITE CHATEAU BURZIO", ep: null },
 ];
 
-const DSDEN_EMAIL = "ia-dsden13@ac-aix-marseille.fr";
+const DSDEN_EMAIL = "ce.ia13@ac-aix-marseille.fr";
 const SUBJECT = "Opposition aux fermetures de classes – Rentrée 2026 – Marseille";
 
 // ─── COUNTER ────────────────────────────────────────────
@@ -1102,7 +1096,7 @@ function closeOnBg(e) { if (e.target === document.getElementById('overlay')) clo
 
 function sendMessage() {
   const msg = document.getElementById('field-message').value;
-  window.open('mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg), '_blank');
+  window.location.href = 'mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
   localCount++;
   localStorage.setItem('msg_count', localCount);
   animateCounter(BASE_COUNT + localCount);
@@ -1120,9 +1114,9 @@ function copyMessage() {
 
 const pageUrl = encodeURIComponent(window.location.href);
 const txt = encodeURIComponent('43 classes supprimées à Marseille. Envoyez un message en 2 min :');
-function shareWhatsApp() { window.open('https://wa.me/?text=' + txt + '%20' + pageUrl); }
-function shareFacebook() { window.open('https://www.facebook.com/sharer/sharer.php?u=' + pageUrl); }
-function shareTwitter() { window.open('https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl); }
+function shareWhatsApp() { window.location.href = 'https://wa.me/?text=' + txt + '%20' + pageUrl); }
+function shareFacebook() { window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl); }
+function shareTwitter() { window.location.href = 'https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl); }
 function copyLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     const b = document.getElementById('copy-link-btn');
