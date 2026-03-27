@@ -1,0 +1,4 @@
+subscribers.db
+patch.py
+__pycache__/
+*.pyc
