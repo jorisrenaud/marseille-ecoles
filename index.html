@@ -875,21 +875,58 @@
 
     <div id="form-view">
       <h2>✉ Votre message à la DSDEN 13</h2>
-      <p class="modal-desc">
-        Personnalisez le message si vous le souhaitez, puis envoyez-le directement depuis votre messagerie.
-        C'est votre voix — ça pèse plus qu'une pétition.
-      </p>
+      <p class="modal-desc">Personnalisez le message, puis envoyez-le depuis votre messagerie. C'est votre voix — ça pèse plus qu'une pétition.</p>
 
       <div class="form-group">
-        <label>Votre prénom (optionnel)</label>
-        <input type="text" id="field-prenom" placeholder="Ex : Sophie" />
+        <label>Vous êtes…</label>
+        <div class="profil-toggle">
+          <label class="profil-opt">
+            <input type="radio" name="modal-profil" value="concerne" checked onchange="onProfilChange()" />
+            Parent d'une école concernée
+          </label>
+          <label class="profil-opt">
+            <input type="radio" name="modal-profil" value="solidaire" onchange="onProfilChange()" />
+            Parent d'une autre école publique
+          </label>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label>École concernée</label>
-        <select id="field-ecole">
-          <option value="">— Sélectionnez votre école —</option>
-        </select>
+      <div id="modal-bloc-concerne">
+        <div class="form-group">
+          <label>Votre prénom (optionnel)</label>
+          <input type="text" id="field-prenom" placeholder="Ex : Sophie" />
+        </div>
+        <div class="form-group">
+          <label>École concernée</label>
+          <select id="field-ecole" onchange="onModalSchoolChange()">
+            <option value="">— Sélectionnez votre école —</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="modal-bloc-solidaire" style="display:none;">
+        <div class="form-group">
+          <label>Votre prénom (optionnel)</label>
+          <input type="text" id="field-prenom-sol" placeholder="Ex : Sophie" />
+        </div>
+        <div class="form-group">
+          <label>Votre école (optionnel)</label>
+          <input type="text" id="field-ecole-sol" placeholder="Ex : École Jean Jaurès…" />
+        </div>
+        <div class="solidarity-note">💡 Votre message mettra en avant l'école publique comme service public universel, indépendamment de votre école.</div>
+      </div>
+
+      <div class="modal-recipient">
+        <div class="modal-recipient-row">
+          <span class="mr-label">À</span>
+          <span class="mr-name">DSDEN 13</span>
+          <a class="mr-email" href="mailto:ce.ia13@ac-aix-marseille.fr">ce.ia13@ac-aix-marseille.fr</a>
+        </div>
+        <div class="modal-recipient-row" id="modal-cc-row" style="display:none;">
+          <span class="mr-label">CC</span>
+          <span id="modal-cc-content"></span>
+        </div>
+        <button class="btn-copy-emails" id="btn-copy-emails" onclick="copyEmailAddresses()">📋 Copier les adresses</button>
       </div>
 
       <div class="form-group">
