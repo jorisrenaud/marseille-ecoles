@@ -1096,7 +1096,13 @@ function closeOnBg(e) { if (e.target === document.getElementById('overlay')) clo
 
 function sendMessage() {
   const msg = document.getElementById('field-message').value;
-  window.location.href = 'mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+  const mailtoUrl = 'mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+  const a = document.createElement('a');
+  a.href = mailtoUrl;
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
   localCount++;
   localStorage.setItem('msg_count', localCount);
   animateCounter(BASE_COUNT + localCount);
@@ -1114,9 +1120,9 @@ function copyMessage() {
 
 const pageUrl = encodeURIComponent(window.location.href);
 const txt = encodeURIComponent('43 classes supprimées à Marseille. Envoyez un message en 2 min :');
-function shareWhatsApp() { window.location.href = 'https://wa.me/?text=' + txt + '%20' + pageUrl); }
-function shareFacebook() { window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl); }
-function shareTwitter() { window.location.href = 'https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl); }
+function shareWhatsApp() { window.location.href = 'https://wa.me/?text=' + txt + '%20' + pageUrl; }
+function shareFacebook() { window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl; }
+function shareTwitter() { window.location.href = 'https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl; }
 function copyLink() {
   navigator.clipboard.writeText(window.location.href).then(() => {
     const b = document.getElementById('copy-link-btn');
