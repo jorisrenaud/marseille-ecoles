@@ -661,6 +661,22 @@
     .map-address strong { color:var(--text); }
     .map-link { font-size:.78rem; font-weight:600; color:var(--red); text-decoration:none; white-space:nowrap; }
     .map-link:hover { text-decoration:underline; }
+
+    .profil-toggle { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1rem; }
+    .profil-opt { display:flex; align-items:center; gap:.55rem; padding:.6rem .85rem; background:var(--cream); border:1px solid var(--border); border-radius:.4rem; cursor:pointer; font-size:.85rem; font-weight:600; transition:border-color .2s,background .2s; user-select:none; }
+    .profil-opt:has(input:checked) { border-color:var(--red); background:var(--red-bg); color:var(--red); }
+    .profil-opt input[type="radio"] { width:.95rem; height:.95rem; accent-color:var(--red); flex-shrink:0; margin:0; }
+    @media(max-width:460px){ .profil-toggle{grid-template-columns:1fr;} }
+    .modal-recipient { background:var(--sand); border:1px solid var(--border); border-radius:.45rem; padding:.75rem 1rem; margin-bottom:.9rem; font-size:.82rem; display:flex; flex-direction:column; gap:.4rem; }
+    .modal-recipient-row { display:flex; align-items:center; flex-wrap:wrap; gap:.3rem .7rem; }
+    .mr-label { font-size:.7rem; font-weight:700; letter-spacing:.07em; text-transform:uppercase; color:var(--muted); min-width:80px; }
+    .mr-name { color:var(--text); font-weight:600; }
+    .mr-email { color:var(--red); font-weight:700; font-family:'Courier New',monospace; font-size:.82rem; text-decoration:none; word-break:break-all; }
+    .mr-email:hover { text-decoration:underline; }
+    .mr-circo { font-size:.75rem; color:var(--muted); font-style:italic; }
+    .btn-copy-emails { align-self:flex-start; background:var(--white); color:var(--text); border:1px solid var(--border); padding:.28rem .75rem; border-radius:.3rem; font-family:inherit; font-size:.75rem; font-weight:600; cursor:pointer; margin-top:.2rem; }
+    .btn-copy-emails:hover { background:var(--warm); }
+    .solidarity-note { background:var(--sand); border-left:3px solid var(--red); border-radius:0 .4rem .4rem 0; padding:.7rem 1rem; font-size:.83rem; color:var(--muted); line-height:1.55; margin-bottom:.9rem; }
   </style>
 </head>
 <body>
@@ -999,6 +1015,56 @@ schools.forEach(s => {
   sel.appendChild(o);
 });
 
+let currentCircoEmail = null;
+
+function updateRecipientDisplay() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  const ccRow = document.getElementById('modal-cc-row');
+  if (profil === 'solidaire') {
+    currentCircoEmail = null;
+    ccRow.style.display = 'none';
+  } else {
+    const school = schoolByName[document.getElementById('field-ecole').value];
+    if (school) {
+      currentCircoEmail = circoEmail(school.code_circo);
+      document.getElementById('modal-cc-content').innerHTML =
+        '<a class="mr-email" href="mailto:'+currentCircoEmail+'">'+currentCircoEmail+'</a>' +
+        ' <span class="mr-circo">IEN - Circo '+school.circo+'</span>';
+      ccRow.style.display = 'flex';
+    } else {
+      currentCircoEmail = null;
+      ccRow.style.display = 'none';
+    }
+  }
+}
+
+function onProfilChange() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  document.getElementById('modal-bloc-concerne').style.display  = profil === 'concerne'  ? 'block' : 'none';
+  document.getElementById('modal-bloc-solidaire').style.display = profil === 'solidaire' ? 'block' : 'none';
+  updateRecipientDisplay();
+  refreshMsg();
+}
+
+function onModalSchoolChange() { updateRecipientDisplay(); refreshMsg(); }
+
+function copyEmailAddresses() {
+  const addresses = currentCircoEmail ? DSDEN_EMAIL + '\n' + currentCircoEmail : DSDEN_EMAIL;
+  navigator.clipboard.writeText(addresses).then(() => {
+    const b = document.getElementById('btn-copy-emails');
+    const orig = b.textContent;
+    b.textContent = 'Copie !';
+    setTimeout(() => b.textContent = orig, 2000);
+  });
+}
+
+const MSG_VARIANTS_SOL = [
+  (p,e,s) => `Madame, Monsieur,\n\nJe suis parent d'élève dans une école publique marseillaise non directement concernée par les fermetures, et je souhaite vous faire part de mon opposition à ce projet.\n\nL'école publique est un service public obligatoire. Sa dégradation nous concerne tous. Ce qui arrive à 43 classes peut demain toucher n'importe quel établissement.\n\nJe vous demande de défendre les moyens de l'école publique dans notre département.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nParent d'élève${e ? " de l'école "+e : " dans une école publique de Marseille"}, je vous écris au nom de l'attachement que je porte à l'école publique comme service essentiel.\n\nCes 43 suppressions envoient un signal inquiétant sur l'avenir de l'enseignement public dans notre ville. L'école publique est indivisible.\n\nJe vous demande de suspendre ce projet et d'engager un dialogue avec les familles.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nParent d'élève${e ? " de l'école "+e : ""} dont l'école n'est pas listée, je refuse de rester silencieux. Ces 43 suppressions s'inscrivent dans une logique comptable que les familles rejettent.\n\nL'école publique n'est pas une variable d'ajustement. C'est le fondement de l'égalité des chances.\n\nJe vous demande de revenir sur ces décisions.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nL'école publique est un bien commun, et ces fermetures nous concernent tous. Réduire ses moyens à Marseille, c'est fragiliser l'ensemble du tissu éducatif et social de la ville.\n\nJe vous appelle à agir pour que chaque enfant de Marseille bénéficie des conditions d'apprentissage qu'il mérite.\n\nCordialement,\n${s}`,
+];
+
 let currentVariantIdx = 0;
 
 const MSG_VARIANTS = [
@@ -1054,6 +1120,13 @@ const MSG_VARIANTS = [
 ];
 
 function buildMessage() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked')?.value || 'concerne';
+  if (profil === 'solidaire') {
+    const p = document.getElementById('field-prenom-sol').value.trim();
+    const e = document.getElementById('field-ecole-sol').value.trim();
+    const s = p || "Un parent d'élève de Marseille";
+    return MSG_VARIANTS_SOL[currentVariantIdx % MSG_VARIANTS_SOL.length](p, e, s);
+  }
   const p = document.getElementById('field-prenom').value.trim();
   const e = document.getElementById('field-ecole').value;
   const s = p || "Un parent d'élève de Marseille";
@@ -1071,6 +1144,8 @@ function shuffleMessage() {
 function refreshMsg() { document.getElementById('field-message').value = buildMessage(); }
 document.getElementById('field-prenom').addEventListener('input', refreshMsg);
 document.getElementById('field-ecole').addEventListener('change', refreshMsg);
+document.getElementById('field-prenom-sol')?.addEventListener('input', refreshMsg);
+document.getElementById('field-ecole-sol')?.addEventListener('input', refreshMsg);
 
 function openModal() {
   currentVariantIdx = Math.floor(Math.random() * MSG_VARIANTS.length);
@@ -1086,7 +1161,12 @@ function closeOnBg(e) { if (e.target === document.getElementById('overlay')) clo
 
 function sendMessage() {
   const msg = document.getElementById('field-message').value;
-  const mailtoUrl = 'mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+  let mailtoUrl;
+  if (currentCircoEmail) {
+    mailtoUrl = 'mailto:' + DSDEN_EMAIL + '?cc=' + encodeURIComponent(currentCircoEmail) + '&subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+  } else {
+    mailtoUrl = 'mailto:' + DSDEN_EMAIL + '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+  }
   const a = document.createElement('a');
   a.href = mailtoUrl;
   a.style.display = 'none';
