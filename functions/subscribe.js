@@ -1,3 +1,6 @@
+const TELEGRAM_BOT_TOKEN = '8750169085:AAE7zzehjvYhM_S9C3zQLhwi3utc1IzQ3lE';
+const TELEGRAM_CHAT_ID   = '675206855';
+
 export async function onRequestPost({ request, env }) {
   let data;
   try { data = await request.json(); }
@@ -14,6 +17,19 @@ export async function onRequestPost({ request, env }) {
     await env.DB.prepare(
       'INSERT INTO subscribers (email, arrondissement) VALUES (?, ?)'
     ).bind(email, arr || null).run();
+
+    // Notif Telegram
+    const arr_label = arr ? `${arr}e arrondissement` : 'arrondissement non précisé';
+    await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TELEGRAM_CHAT_ID,
+        text: `📬 *Nouvelle inscription — Ecoles Marseille*\n\n📧 ${email}\n📍 ${arr_label}`,
+        parse_mode: 'Markdown'
+      })
+    });
+
     return json(200, { ok: true, message: 'Inscription enregistrée !' });
   } catch (e) {
     if (e.message && e.message.includes('UNIQUE')) {
