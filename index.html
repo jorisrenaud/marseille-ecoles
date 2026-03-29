@@ -660,12 +660,12 @@
     } else {
       mailto += '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
     }
-    const a = document.createElement('a');
-    a.href = mailto; a.style.display = 'none';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    incrementCounter();
-    document.getElementById('form-view').style.display = 'none';
-    document.getElementById('success-view').style.display = 'block';
+    window.location.href = mailto;
+    setTimeout(() => {
+      incrementCounter();
+      document.getElementById('form-view').style.display = 'none';
+      document.getElementById('success-view').style.display = 'block';
+    }, 300);
   }
 
   function copyMessage() {
