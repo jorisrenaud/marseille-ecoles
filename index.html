@@ -91,6 +91,7 @@
     .actions-list li { display:flex; align-items:flex-start; gap:.7rem; font-size:.93rem; line-height:1.5; }
     .actions-list li .icon { flex-shrink:0; width:1.6rem; height:1.6rem; background:var(--sand); border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; margin-top:.05rem; }
     .tagline { font-size:1.05rem; font-weight:700; margin-top:1.4rem; padding-top:1.2rem; border-top:1px solid var(--border); }
+.rdv-block + .rdv-block { margin-top: .75rem; }
 
     /* MAP */
     .map-block { margin-top:1.5rem; max-width:700px; border:1px solid var(--orange-border); border-radius:.6rem; overflow:hidden; }
@@ -193,20 +194,16 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
 <div class="notice-bar">
   <div class="notice-inner">
     <p class="notice-title">📣 Restez mobilisés</p>
-    <p class="notice-text">👉 Les modalités d'action seront mises à jour ici tout au long du week-end. 🔁 Revenez régulièrement consulter la page et partagez-la autour de vous.</p>
+    <p class="notice-text">👉 Les modalités d'action seront mises à jour ici régulièrement. 🔁 Revenez consulter la page et partagez-la autour de vous.</p>
     <p class="notice-slogan">✊ Ensemble, on pèse plus.</p>
   </div>
 </div>
 
 <section class="hero">
   <h1><em>Des dizaines de classes supprimées</em><br>dans nos écoles marseillaises.<br>Faites-vous entendre.</h1>
-  <p class="hero-sub">Le projet de carte scolaire 2026 prévoit la fermeture de 43 classes à Marseille. En 2 minutes, envoyez un message à l'Éducation Nationale. Plus on est nombreux, plus ça compte.</p>
-  <div class="counter-wrap">
-    <div class="counter-number" id="counter">—</div>
-    <div class="counter-label">messages envoyés</div>
-  </div>
+  <p class="hero-sub">Le projet de carte scolaire 2026 prévoit la fermeture de dizaines de classes à Marseille. En 2 minutes, envoyez un message à l'Éducation Nationale. Plus on est nombreux, plus ça compte.</p>
   <button class="cta-btn" onclick="openModal()">✉ Envoyer mon message maintenant</button>
-  <p class="cta-hint">Gratuit · Message pré-rédigé, modifiable · Prend 2 minutes</p>
+  <p class="cta-hint">Message pré-rédigé, modifiable · Prend 2 minutes</p>
 </section>
 
 <section class="facts">
