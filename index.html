@@ -136,6 +136,7 @@
     .modal-close { position:absolute; top:1rem; right:1.2rem; background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer; }
     .modal h2 { font-size:1.3rem; font-weight:800; margin-bottom:.35rem; }
     .modal .modal-desc { font-size:.87rem; color:var(--muted); margin-bottom:1.2rem; line-height:1.55; }
+a.btn-send { display:block; text-align:center; text-decoration:none; }
 
     /* profil toggle */
     .profil-toggle { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1rem; }
@@ -388,7 +389,7 @@
       <button class="btn-shuffle" onclick="shuffleMessage()">🔀 Autre variante <span class="variant-badge" id="variant-badge">1/50</span></button>
 
       <div class="modal-actions">
-        <button class="btn-send" onclick="sendMessage()">✉ Ouvrir dans ma messagerie</button>
+<a class="btn-send" id="btn-send-link" href="#" onclick="onMailSent()">✉ Ouvrir dans ma messagerie</a>
         <button class="btn-copy" id="copy-msg-btn" onclick="copyMessage()">📋 Copier</button>
       </div>
     </div>
@@ -631,9 +632,12 @@
     document.getElementById('field-message').value = buildMessage();
     const badge = document.getElementById('variant-badge');
     if (badge) badge.textContent = (currentVariantIdx + 1) + '/' + total;
+updateMailtoLink();
   }
 
-  function refreshMsg() { document.getElementById('field-message').value = buildMessage(); }
+  function refreshMsg() { document.getElementById('field-message').value = buildMessage(); 
+updateMailtoLink();
+}
   document.getElementById('field-prenom').addEventListener('input', refreshMsg);
   document.getElementById('field-prenom-sol').addEventListener('input', refreshMsg);
   document.getElementById('field-ecole-sol').addEventListener('input', refreshMsg);
@@ -649,24 +653,30 @@
     document.getElementById('form-view').style.display = 'block';
     document.getElementById('success-view').style.display = 'none';
   }
+
   function closeModal() { document.getElementById('overlay').classList.remove('open'); }
   function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-  function sendMessage() {
-    const msg = document.getElementById('field-message').value;
-    let mailto = 'mailto:' + DSDEN_EMAIL;
-    if (currentCircoEmail) {
-      mailto += '?cc=' + encodeURIComponent(currentCircoEmail) + '&subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
-    } else {
-      mailto += '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
-    }
-    window.location.href = mailto;
-    setTimeout(() => {
-      incrementCounter();
-      document.getElementById('form-view').style.display = 'none';
-      document.getElementById('success-view').style.display = 'block';
-    }, 300);
+  function updateMailtoLink() {
+  const msg = document.getElementById('field-message').value;
+  let mailto = 'mailto:' + DSDEN_EMAIL;
+  if (currentCircoEmail) {
+    mailto += '?cc=' + encodeURIComponent(currentCircoEmail)
+      + '&subject=' + encodeURIComponent(SUBJECT)
+      + '&body=' + encodeURIComponent(msg);
+  } else {
+    mailto += '?subject=' + encodeURIComponent(SUBJECT)
+      + '&body=' + encodeURIComponent(msg);
   }
+  const link = document.getElementById('btn-send-link');
+  if (link) link.href = mailto;
+}
+
+function onMailSent() {
+  incrementCounter();
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('success-view').style.display = 'block';
+}
 
   function copyMessage() {
     navigator.clipboard.writeText(document.getElementById('field-message').value).then(() => {
