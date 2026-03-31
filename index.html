@@ -4,9 +4,17 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Non aux fermetures de classes à Marseille</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
+
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <!-- ✅ FIX : Leaflet JS chargé proprement -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --red:     #c0392b;
@@ -77,6 +85,52 @@
     .school-meta { display:flex; gap:.4rem; align-items:center; flex-shrink:0; }
     .arr-tag { font-size:.72rem; color:var(--muted); background:var(--sand); padding:.15rem .5rem; border-radius:999px; border:1px solid var(--border); }
     .rep-tag { font-size:.68rem; font-weight:700; background:var(--red-bg); color:var(--red); padding:.15rem .5rem; border-radius:999px; border:1px solid #f5c9c5; }
+    .mesure-tag { font-size:.65rem; font-weight:700; padding:.15rem .5rem; border-radius:999px; white-space:nowrap; }
+    .mesure-fermeture { background:#fdf0ee; color:var(--red); border:1px solid #f5c9c5; }
+    .mesure-dedoublement { background:#f0eeff; color:#5b3fc8; border:1px solid #c8bef5; }
+    .mesure-ulis { background:#e8f8f5; color:#1a7a63; border:1px solid #a8ddd4; }
+    .school-item.type-dedoublement { border-left:3px solid #7c5ce8; }
+    .school-item.type-ulis { border-left:3px solid #1a9e80; }
+    .school-item.type-fermeture { border-left:3px solid var(--red); }
+
+    /* CARTE INTÉGRÉE */
+    .school-map-wrap { position:relative; border:1px solid var(--border); border-radius:.6rem; overflow:hidden; margin-bottom:1.5rem; }
+    #schools-map { height:480px; width:100%; }
+    .map-filters {
+      position:absolute; top:.6rem; left:.6rem; z-index:400;
+      display:flex; flex-wrap:wrap; gap:.4rem;
+    }
+    .map-filter-btn {
+      display:flex; align-items:center; gap:.4rem; padding:.35rem .75rem;
+      border-radius:999px; border:1.5px solid; cursor:pointer; font-size:.75rem; font-weight:700;
+      font-family:inherit; transition:opacity .15s; user-select:none; background:white;
+    }
+    .map-filter-btn.off { opacity:.35; }
+    .map-filter-btn .fd { width:.55rem; height:.55rem; border-radius:50%; }
+    .mf-fermeture { border-color:#f5c9c5; color:var(--red); }
+    .mf-fermeture .fd { background:var(--red); }
+    .mf-dedoublement { border-color:#c8bef5; color:#6c3fc5; }
+    .mf-dedoublement .fd { background:#6c3fc5; }
+    .mf-ulis { border-color:#a8ddd4; color:#1a7a63; }
+    .mf-ulis .fd { background:#1a7a63; }
+    .map-search-wrap {
+      position:absolute; top:.6rem; right:.6rem; z-index:400;
+    }
+    .map-search-wrap input {
+      background:white; border:1px solid var(--border); border-radius:.4rem;
+      padding:.35rem .7rem; font-size:.78rem; font-family:inherit; outline:none;
+      width:180px; color:var(--text); box-shadow:0 1px 4px rgba(0,0,0,.08);
+    }
+    .map-search-wrap input:focus { border-color:var(--red); }
+    @media(max-width:500px){ #schools-map{height:360px;} .map-search-wrap{display:none;} }
+
+    /* LÉGENDE */
+    .list-legend { display:flex; flex-wrap:wrap; gap:.5rem 1.2rem; margin-bottom:1.4rem; align-items:center; }
+    .legend-item { display:flex; align-items:center; gap:.4rem; font-size:.78rem; color:var(--muted); }
+    .legend-dot { width:.65rem; height:.65rem; border-radius:50%; flex-shrink:0; }
+    .legend-dot.fermeture { background:var(--red); }
+    .legend-dot.dedoublement { background:#7c5ce8; }
+    .legend-dot.ulis { background:#1a9e80; }
 
     /* MOBILISATION */
     .mobilisation { background:var(--white); border-top:1px solid var(--border); padding:3.5rem 2rem; }
@@ -91,7 +145,6 @@
     .actions-list li { display:flex; align-items:flex-start; gap:.7rem; font-size:.93rem; line-height:1.5; }
     .actions-list li .icon { flex-shrink:0; width:1.6rem; height:1.6rem; background:var(--sand); border:1px solid var(--border); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.8rem; margin-top:.05rem; }
     .tagline { font-size:1.05rem; font-weight:700; margin-top:1.4rem; padding-top:1.2rem; border-top:1px solid var(--border); }
-.rdv-block + .rdv-block { margin-top: .75rem; }
 
     /* MAP */
     .map-block { margin-top:1.5rem; max-width:700px; border:1px solid var(--orange-border); border-radius:.6rem; overflow:hidden; }
@@ -137,7 +190,6 @@
     .modal-close { position:absolute; top:1rem; right:1.2rem; background:none; border:none; color:var(--muted); font-size:1.3rem; cursor:pointer; }
     .modal h2 { font-size:1.3rem; font-weight:800; margin-bottom:.35rem; }
     .modal .modal-desc { font-size:.87rem; color:var(--muted); margin-bottom:1.2rem; line-height:1.55; }
-a.btn-send { display:block; text-align:center; text-decoration:none; }
 
     /* profil toggle */
     .profil-toggle { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1rem; }
@@ -194,23 +246,28 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
 <div class="notice-bar">
   <div class="notice-inner">
     <p class="notice-title">📣 Restez mobilisés</p>
-    <p class="notice-text">👉 Les modalités d'action seront mises à jour ici régulièrement. 🔁 Revenez consulter la page et partagez-la autour de vous.</p>
+    <p class="notice-text">👉 Les modalités d'action seront mises à jour ici tout au long du week-end. 🔁 Revenez régulièrement consulter la page et partagez-la autour de vous.</p>
     <p class="notice-slogan">✊ Ensemble, on pèse plus.</p>
   </div>
 </div>
 
 <section class="hero">
-  <h1><em>Des dizaines de classes supprimées</em><br>dans nos écoles marseillaises.<br>Faites-vous entendre.</h1>
-  <p class="hero-sub">Le projet de carte scolaire 2026 prévoit la fermeture de dizaines de classes à Marseille. En 2 minutes, envoyez un message à l'Éducation Nationale. Plus on est nombreux, plus ça compte.</p>
+  <h1><em>Des dizines de classes supprimées</em><br>dans nos écoles marseillaises.<br>Faites-vous entendre.</h1>
+  <p class="hero-sub">Le projet de carte scolaire 2026 prévoit la fermeture de dizines de classes et suppressions de postes Marseille. En 2 minutes, envoyez un message à l'Éducation Nationale. Plus on est nombreux, plus ça compte.</p>
+  <div class="counter-wrap">
+    <div class="counter-number" id="counter">—</div>
+    <div class="counter-label">messages envoyés</div>
+  </div>
   <button class="cta-btn" onclick="openModal()">✉ Envoyer mon message maintenant</button>
-  <p class="cta-hint">Message pré-rédigé, modifiable · Prend 2 minutes</p>
+  <p class="cta-hint">Gratuit · Message pré-rédigé, modifiable · Prend 2 minutes</p>
 </section>
 
 <section class="facts">
   <div class="section-inner">
     <p class="section-label">Pourquoi c'est grave</p>
     <div class="facts-grid">
-      <div class="fact-card"><div class="fact-number">43</div><div class="fact-text">classes supprimées à Marseille selon le projet du 25 mars 2026</div></div>
+      <div class="fact-card"><div class="fact-number">43</div><div class="fact-text">classes supprimées</div></div>
+      <div class="fact-card"><div class="fact-number">46</div><div class="fact-text">dispositifs de dédoublement de classe ou en lien avec les enfants en situation de handicap supprimés</div></div>
       <div class="fact-card"><div class="fact-number">8</div><div class="fact-text">écoles classées REP+ touchées — les plus fragiles en premier</div></div>
     </div>
   </div>
@@ -219,16 +276,42 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
 <section class="context">
   <div class="section-inner">
     <h2>Ce qui se passe</h2>
-    <p>L'État a diffusé le projet de nouvelle carte scolaire 2026. Il prévoit la suppression de 45 classes sur Marseille.</p>
-    <blockquote>« Ces mesures sont la conséquence directe du budget d'austérité voté à l'Assemblée nationale en février dernier. »<br><br>L'Intersyndicale Éducation des Bouches-du-Rhône et la FCPE 13 appellent à la mobilisation.</blockquote>
+    <blockquote>« Ces mesures sont la conséquence directe du budget d'austérité voté à l'Assemblée nationale en février dernier. »</blockquote>
+    <blockquote>« Il faut cesser de tourner autour des mots : au-delà d’un simple ajustement budgétaire, les dotations de moyens tout récemment adressées aux établissements pour la rentrée 2026 traduisent un choix politique brutal, assumé : celui d’un déclassement délibéré de l’école publique.»</blockquote>
     <p>Cette page permet à chaque parent d'envoyer facilement un message à la DSDEN 13 pour exprimer son opposition à ces fermetures. Chaque message compte. Diffusez-la autour de vous.</p>
   </div>
 </section>
 
 <section class="list-section">
   <div class="section-inner">
-    <h2>Les écoles concernées</h2>
-    <p class="source">Source : projet de carte scolaire — groupe de travail du 25 mars 2026 (FSU-SNUipp 13)</p>
+    <h2>Les écoles et structures impactées</h2>
+    <p class="source">Source : projet de carte scolaire — groupe de travail du 25 mars 2026</p>
+
+    <div class="list-legend">
+      <div class="legend-item"><div class="legend-dot fermeture"></div> Fermeture de classe</div>
+      <div class="legend-item"><div class="legend-dot dedoublement"></div> Retrait dédoublement CP/CE1</div>
+      <div class="legend-item"><div class="legend-dot ulis"></div> Retrait poste ULIS / Handicap</div>
+    </div>
+
+    <!-- CARTE -->
+    <div class="school-map-wrap">
+      <div class="map-filters">
+        <button class="map-filter-btn mf-fermeture" id="mf-fermeture" onclick="toggleMapFilter('fermeture')">
+          <div class="fd"></div> Fermetures
+        </button>
+        <button class="map-filter-btn mf-dedoublement" id="mf-dedoublement" onclick="toggleMapFilter('dedoublement')">
+          <div class="fd"></div> Dédoublement
+        </button>
+        <button class="map-filter-btn mf-ulis" id="mf-ulis" onclick="toggleMapFilter('ulis')">
+          <div class="fd"></div> ULIS/Handicap
+        </button>
+      </div>
+      <div class="map-search-wrap">
+        <input type="text" id="map-search" placeholder="🔍 Rechercher…" oninput="applyMapFilters()"/>
+      </div>
+      <div id="schools-map"></div>
+    </div>
+
     <div class="school-grid" id="school-list"></div>
   </div>
 </section>
@@ -242,22 +325,12 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
         <input type="email" id="nl-email" placeholder="votre@email.fr" required />
         <select id="nl-arr">
           <option value="">Arrondissement (optionnel)</option>
-          <option value="1">1er arrondissement</option>
-          <option value="2">2e arrondissement</option>
-          <option value="3">3e arrondissement</option>
-          <option value="4">4e arrondissement</option>
-          <option value="5">5e arrondissement</option>
-          <option value="6">6e arrondissement</option>
-          <option value="7">7e arrondissement</option>
-          <option value="8">8e arrondissement</option>
-          <option value="9">9e arrondissement</option>
-          <option value="10">10e arrondissement</option>
-          <option value="11">11e arrondissement</option>
-          <option value="12">12e arrondissement</option>
-          <option value="13">13e arrondissement</option>
-          <option value="14">14e arrondissement</option>
-          <option value="15">15e arrondissement</option>
-          <option value="16">16e arrondissement</option>
+          <option value="1">1er</option><option value="2">2e</option><option value="3">3e</option>
+          <option value="4">4e</option><option value="5">5e</option><option value="6">6e</option>
+          <option value="7">7e</option><option value="8">8e</option><option value="9">9e</option>
+          <option value="10">10e</option><option value="11">11e</option><option value="12">12e</option>
+          <option value="13">13e</option><option value="14">14e</option><option value="15">15e</option>
+          <option value="16">16e</option>
         </select>
       </div>
       <button type="submit" class="nl-btn">Je m'inscris</button>
@@ -272,28 +345,28 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
     <h2>Se mobiliser, concrètement</h2>
     <p>Ce projet sera examiné <strong>lors du Conseil Départemental de l'Éducation Nationale</strong>, en présence des services de l'éducation nationale, des fédérations de parents d'élèves, des représentants des villes et départements, et des syndicats.</p>
 
-<div class="rdv-block">
-  <p>🏛 <strong>Jeudi matin — CSA à la DSDEN, soyons visibles dehors</strong></p>
-  <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
-    Le <strong>Comité Social d'Administration (CSA)</strong> se réunit ce jeudi à la DSDEN.
-    C'est l'instance officielle où syndicats et administration examinent la carte scolaire.
-    Les parents n'y siègent pas — mais notre présence dehors pèse sur ceux qui y entrent.
-  </p>
-  <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
-    📍 <strong>Rendez-vous à 8h</strong> devant la DSDEN, 28 boulevard Charles Nédelec,
-    face à la gare Saint-Charles.
-  </p>
-</div>
+    <div class="rdv-block">
+      <p>🏛 <strong>Jeudi matin — CSA à la DSDEN, soyons visibles dehors</strong></p>
+      <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
+        Le <strong>Comité Social d'Administration (CSA)</strong> se réunit ce jeudi à la DSDEN.
+        C'est l'instance officielle où syndicats et administration examinent la carte scolaire.
+        Les parents n'y siègent pas — mais notre présence dehors pèse sur ceux qui y entrent.
+      </p>
+      <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
+        📍 <strong>Rendez-vous à 8h</strong> devant la DSDEN, 28 boulevard Charles Nédelec,
+        face à la gare Saint-Charles.
+      </p>
+    </div>
 
-<div class="rdv-block" style="margin-top:-.4rem;">
-  <p>☕ <strong>Jeudi matin — Café parents devant les écoles</strong></p>
-  <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
-    Pendant ce temps, organisez un café parents devant votre école à 8h.
-    Pas besoin d'organisation lourde : une pancarte, un thermos, et des parents prêts à discuter.
-    C'est visible, positif, et ça mobilise ceux qui ne peuvent pas se déplacer jusqu'à la DSDEN.
-  </p>
-</div>
-    
+    <div class="rdv-block" style="margin-top:-.4rem;">
+      <p>☕ <strong>Jeudi matin — Café parents devant les écoles</strong></p>
+      <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">
+        Pendant ce temps, organisez un café parents devant votre école à 8h.
+        Pas besoin d'organisation lourde : une pancarte, un thermos, et des parents prêts à discuter.
+        C'est visible, positif, et ça mobilise ceux qui ne peuvent pas se déplacer jusqu'à la DSDEN.
+      </p>
+    </div>
+
     <div class="rdv-block" style="margin-top:-.4rem;">
       <p>🏛 <strong>Vendredi matin à 8h, jour du CDEN — devant la DSDEN avec au moins 10 parents par école </strong></p>
       <p style="margin-top:.6rem;font-size:.9rem;color:var(--muted);">Haut du boulevard Charles Nedelec, face à la gare Saint-Charles</p>
@@ -388,7 +461,7 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
         <div class="modal-recipient-row">
           <span class="mr-label">À</span>
           <span class="mr-name">DSDEN 13</span>
-          <a class="mr-email" href="mailto:ce.ia13@ac-aix-marseille.fr">ce.ia13@ac-aix-marseille.fr</a>
+          <a class="mr-email" href="/cdn-cgi/l/email-protection#4d2e2863242c7c7e0d2c2e602c243560202c3f3e2824212128632b3f"><span class="__cf_email__" data-cfemail="7e1d1b50171f4f4d3e1f1d531f170653131f0c0d1b1712121b50180c">[email&#160;protected]</span></a>
         </div>
         <div class="modal-recipient-row" id="modal-cc-row" style="display:none;">
           <span class="mr-label">CC</span>
@@ -405,7 +478,7 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
       <button class="btn-shuffle" onclick="shuffleMessage()">🔀 Autre variante <span class="variant-badge" id="variant-badge">1/50</span></button>
 
       <div class="modal-actions">
-<a class="btn-send" id="btn-send-link" href="#" onclick="onMailSent()">✉ Ouvrir dans ma messagerie</a>
+        <button class="btn-send" onclick="sendMessage()">✉ Ouvrir dans ma messagerie</button>
         <button class="btn-copy" id="copy-msg-btn" onclick="copyMessage()">📋 Copier</button>
       </div>
     </div>
@@ -424,332 +497,525 @@ a.btn-send { display:block; text-align:center; text-decoration:none; }
   </div>
 </div>
 
-<script>
-  // ─── DATA ──────────────────────────────────────────────
-  const schools = [
-    { arr:"13001", nom:"HOTEL DES POSTES",          ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13002", nom:"DAMES (DES)",                ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13002", nom:"MOULINS",                    ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13002", nom:"ACCOULES",                   ep:null,   circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13003", nom:"BERNARD CADENAT",            ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13004", nom:"BOISSON",                    ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
-    { arr:"13004", nom:"LONGCHAMP",                  ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
-    { arr:"13004", nom:"SAINT VINCENT DE PAUL",      ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
-    { arr:"13005", nom:"CHAVE",                      ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13005", nom:"LOUBIERE",                   ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13005", nom:"ABBE DE L'EPEE",             ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13005", nom:"ALEXANDRE COPELLO",          ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13005", nom:"OLIVIER GILLIBERT",          ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13005", nom:"FRANKLIN ROOSEVELT",         ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13006", nom:"FRIEDLAND",                  ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13006", nom:"JEAN FIOLLE",                ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13006", nom:"LODI",                       ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13006", nom:"FIOLLE-FALQUE",              ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13007", nom:"PHARO CATALANS",             ep:null,   circo:"Marseille St Charles",  code_circo:"0133619N" },
-    { arr:"13008", nom:"SAINTE ANNE",                ep:null,   circo:"Marseille Corniche",    code_circo:"0131306Z" },
-    { arr:"13008", nom:"ROY D'ESPAGNE",              ep:null,   circo:"Marseille Corniche",    code_circo:"0131306Z" },
-    { arr:"13009", nom:"SQUARE MICHELET",            ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13009", nom:"ROUVIERE (LA)",              ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13009", nom:"CHATEAU SEC",                ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13009", nom:"CABOT",                      ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
-    { arr:"13010", nom:"SAINT LOUP GABRIEL FAURE",   ep:null,   circo:"Marseille Huveaune",    code_circo:"0131302V" },
-    { arr:"13012", nom:"BEAUMONT BOMBARDIERE",       ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
-    { arr:"13012", nom:"OLYMPE DE GOUGES",           ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
-    { arr:"13012", nom:"SAINT BARNABE",              ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
-    { arr:"13012", nom:"BOIS LUZY",                  ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
-    { arr:"13013", nom:"ROSE LA GARDE",              ep:"REP+", circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"MALPASSE LES OLIVIERS",      ep:"REP+", circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"MALPASSE",                   ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"SAINT JEROME VILLAGE 1",     ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"FONDACLE",                   ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"MARTEGAUX (LES)",            ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13013", nom:"CHATEAU GOMBERT ATHENA",     ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
-    { arr:"13014", nom:"BATARELLE (LA)",             ep:null,   circo:"Marseille Le Merlan",   code_circo:"0131297P" },
-    { arr:"13015", nom:"N.D LIMITE CHATEAU BURZIO",  ep:null,   circo:"Marseille Madrague",    code_circo:"0133618M" },
-  ];
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+// ─── DATA ──────────────────────────────────────────────
+const schools = [
+  { arr:"13001", nom:"HOTEL DES POSTES",          ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13002", nom:"DAMES (DES)",                ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13002", nom:"MOULINS",                    ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13002", nom:"ACCOULES",                   ep:null,   circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13003", nom:"BERNARD CADENAT",            ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13004", nom:"BOISSON",                    ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
+  { arr:"13004", nom:"LONGCHAMP",                  ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
+  { arr:"13004", nom:"SAINT VINCENT DE PAUL",      ep:null,   circo:"Marseille Longchamp",   code_circo:"0133284Z" },
+  { arr:"13005", nom:"CHAVE",                      ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13005", nom:"LOUBIERE",                   ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13005", nom:"ABBE DE L'EPEE",             ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13005", nom:"ALEXANDRE COPELLO",          ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13005", nom:"OLIVIER GILLIBERT",          ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13005", nom:"FRANKLIN ROOSEVELT",         ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13006", nom:"FRIEDLAND",                  ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13006", nom:"JEAN FIOLLE",                ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13006", nom:"LODI",                       ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13006", nom:"FIOLLE-FALQUE",              ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13007", nom:"PHARO CATALANS",             ep:null,   circo:"Marseille St Charles",  code_circo:"0133619N" },
+  { arr:"13008", nom:"SAINTE ANNE",                ep:null,   circo:"Marseille Corniche",    code_circo:"0131306Z" },
+  { arr:"13008", nom:"ROY D'ESPAGNE",              ep:null,   circo:"Marseille Corniche",    code_circo:"0131306Z" },
+  { arr:"13009", nom:"SQUARE MICHELET",            ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13009", nom:"ROUVIERE (LA)",              ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13009", nom:"CHATEAU SEC",                ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13009", nom:"CABOT",                      ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R" },
+  { arr:"13010", nom:"SAINT LOUP GABRIEL FAURE",   ep:null,   circo:"Marseille Huveaune",    code_circo:"0131302V" },
+  { arr:"13012", nom:"BEAUMONT BOMBARDIERE",       ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
+  { arr:"13012", nom:"OLYMPE DE GOUGES",           ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
+  { arr:"13012", nom:"SAINT BARNABE",              ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
+  { arr:"13012", nom:"BOIS LUZY",                  ep:null,   circo:"Marseille St Barnabé",  code_circo:"0131303W" },
+  { arr:"13013", nom:"ROSE LA GARDE",              ep:"REP+", circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"MALPASSE LES OLIVIERS",      ep:"REP+", circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"MALPASSE",                   ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"SAINT JEROME VILLAGE 1",     ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"FONDACLE",                   ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"MARTEGAUX (LES)",            ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13013", nom:"CHATEAU GOMBERT ATHENA",     ep:null,   circo:"Marseille La Rose",     code_circo:"0131309C" },
+  { arr:"13014", nom:"BATARELLE (LA)",             ep:null,   circo:"Marseille Le Merlan",   code_circo:"0131297P" },
+  { arr:"13015", nom:"N.D LIMITE CHATEAU BURZIO",  ep:null,   circo:"Marseille Madrague",    code_circo:"0133618M" },
 
-  const schoolByName = {};
-  schools.forEach(s => { schoolByName[s.nom] = s; });
-  function circoEmail(code) { return 'ce.' + code.toLowerCase() + '@ac-aix-marseille.fr'; }
+  // ─── Retraits dédoublement CP/CE1 ───────────────────────
+  { arr:"13001", nom:"PARMENTIER",                 ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13001", nom:"MAURICE KORSEC",             ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13002", nom:"DESIREE CLARY",              ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13002", nom:"MONTOLIEU",                  ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13003", nom:"SAINT CHARLES",              ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13003", nom:"VILLETTE FONSCOLOMBE",       ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13003", nom:"E. VAILLANT (application)",  ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13003", nom:"SIMONE DE BEAUVOIR",         ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement","ulis"] },
+  { arr:"13003", nom:"AHMED LITIM",                ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13003", nom:"NATIONAL",                   ep:"REP+", circo:"Marseille St Charles",  code_circo:"0133619N", mesures:["dedoublement"] },
+  { arr:"13004", nom:"DAHDAH",                     ep:"REP+", circo:"Marseille Longchamp",   code_circo:"0133284Z", mesures:["dedoublement"] },
+  { arr:"13006", nom:"PAIX",                       ep:"REP",  circo:"Marseille Mazargues",   code_circo:"0131298R", mesures:["dedoublement"] },
+  { arr:"13011", nom:"PARETTE MAZENODE",           ep:"REP",  circo:null,                    code_circo:null,       mesures:["dedoublement"] },
+  { arr:"13011", nom:"AIR BEL",                    ep:"REP",  circo:null,                    code_circo:null,       mesures:["dedoublement"] },
+  { arr:"13013", nom:"MALPASSE LES LAURIERS",      ep:"REP+", circo:"Marseille La Rose",     code_circo:"0131309C", mesures:["dedoublement"] },
+  { arr:"13014", nom:"EMILE VAYSSIERE 2",          ep:"REP+", circo:"Marseille Le Merlan",   code_circo:"0131297P", mesures:["dedoublement"] },
+  { arr:"13015", nom:"CABUCELLE (LA)",             ep:"REP+", circo:"Marseille Madrague",    code_circo:"0133618M", mesures:["dedoublement"] },
+  { arr:"13015", nom:"ARENC BACHAS EXTERIEUR",     ep:"REP+", circo:"Marseille Madrague",    code_circo:"0133618M", mesures:["dedoublement"] },
+  { arr:"13015", nom:"PARC KALLISTE",              ep:"REP+", circo:"Marseille Madrague",    code_circo:"0133618M", mesures:["dedoublement"] },
+  { arr:"13015", nom:"SAINT ANDRE BARNIER",        ep:"REP+", circo:"Marseille Madrague",    code_circo:"0133618M", mesures:["dedoublement"] },
 
-  const DSDEN_EMAIL = "ce.ia13@ac-aix-marseille.fr";
-  const SUBJECT = "Opposition aux fermetures de classes – Rentrée 2026 – Marseille";
+  // ─── Retraits postes ULIS / Handicap ────────────────────
+  { arr:"13006", nom:"RESODYS (SESSAD)",           ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R", mesures:["ulis"] },
+  { arr:"13008", nom:"PRADO (CMPP)",               ep:null,   circo:"Marseille Corniche",    code_circo:"0131306Z", mesures:["ulis"] },
+  { arr:"13009", nom:"PARADOU (IME)",              ep:null,   circo:"Marseille Mazargues",   code_circo:"0131298R", mesures:["ulis"] },
+];
 
-  // ─── COUNTER ────────────────────────────────────────────
-  const COUNTER_URL = 'counter.php';
-  function animateCounter(from, to) {
-    const el = document.getElementById('counter');
-    const steps = 50; let i = 0;
-    const iv = setInterval(() => {
-      i++;
-      el.textContent = Math.round(from + (to - from) * (i / steps)).toLocaleString('fr-FR');
-      if (i >= steps) clearInterval(iv);
-    }, 20);
-  }
-  (async function loadCounter() {
-    try {
-      const res = await fetch(COUNTER_URL);
-      const data = await res.json();
-      animateCounter(0, data.count);
-    } catch { document.getElementById('counter').textContent = '—'; }
-  })();
-  async function incrementCounter() {
-    try {
-      const res = await fetch(COUNTER_URL, { method:'POST' });
-      const data = await res.json();
-      const cur = parseInt(document.getElementById('counter').textContent.replace(/\s/g,'')) || 0;
-      animateCounter(cur, data.count);
-    } catch {}
-  }
+const schoolByName = {};
+schools.forEach(s => { schoolByName[s.nom] = s; });
+function circoEmail(code) { return 'ce.' + code.toLowerCase() + '@ac-aix-marseille.fr'; }
 
-  // ─── SCHOOL LIST ────────────────────────────────────────
-  const grid = document.getElementById('school-list');
-  schools.forEach(s => {
-    const div = document.createElement('div');
-    div.className = 'school-item';
-    const arrNum = s.arr.replace('130','') + 'e';
-    div.innerHTML = `<span class="school-name">${s.nom}</span><span class="school-meta">${s.ep?`<span class="rep-tag">${s.ep}</span>`:''}<span class="arr-tag">${arrNum}</span></span>`;
-    grid.appendChild(div);
-  });
+const DSDEN_EMAIL = "ce.ia13@ac-aix-marseille.fr";
+const SUBJECT = "Opposition aux fermetures de classes – Rentrée 2026 – Marseille";
 
-  // ─── POPULATE SELECT ────────────────────────────────────
-  const sel = document.getElementById('field-ecole');
-  schools.forEach(s => {
-    const o = document.createElement('option');
-    o.value = s.nom;
-    o.textContent = s.nom + ' (' + s.arr.replace('130','') + 'e)';
-    sel.appendChild(o);
-  });
+// ─── COUNTER ────────────────────────────────────────────
+const COUNTER_URL = 'counter.php';
+function animateCounter(from, to) {
+  const el = document.getElementById('counter');
+  const steps = 50; let i = 0;
+  const iv = setInterval(() => {
+    i++;
+    el.textContent = Math.round(from + (to - from) * (i / steps)).toLocaleString('fr-FR');
+    if (i >= steps) clearInterval(iv);
+  }, 20);
+}
+(async function loadCounter() {
+  try {
+    const res = await fetch(COUNTER_URL);
+    const data = await res.json();
+    animateCounter(0, data.count);
+  } catch { document.getElementById('counter').textContent = '—'; }
+})();
+async function incrementCounter() {
+  try {
+    const res = await fetch(COUNTER_URL, { method:'POST' });
+    const data = await res.json();
+    const cur = parseInt(document.getElementById('counter').textContent.replace(/\s/g,'')) || 0;
+    animateCounter(cur, data.count);
+  } catch {}
+}
 
-  // ─── RECIPIENT ──────────────────────────────────────────
-  let currentCircoEmail = null;
+// ─── SCHOOL LIST ────────────────────────────────────────
+const grid = document.getElementById('school-list');
+schools.forEach(s => {
+  const div = document.createElement('div');
+  const mesures = s.mesures || [];
+  const typeClass = mesures.includes('ulis') && mesures.includes('dedoublement') ? 'type-dedoublement'
+    : mesures.includes('ulis') ? 'type-ulis'
+    : mesures.includes('dedoublement') ? 'type-dedoublement'
+    : 'type-fermeture';
+  div.className = 'school-item ' + typeClass;
+  const arrNum = s.arr.replace('130','') + 'e';
+  const mesureTags = mesures.map(m => {
+    if (m === 'dedoublement') return '<span class="mesure-tag mesure-dedoublement">Dédoublement</span>';
+    if (m === 'ulis') return '<span class="mesure-tag mesure-ulis">ULIS/Handicap</span>';
+    return '';
+  }).join('');
+  div.innerHTML = `<span class="school-name">${s.nom}</span><span class="school-meta">${s.ep?`<span class="rep-tag">${s.ep}</span>`:''}${mesureTags}<span class="arr-tag">${arrNum}</span></span>`;
+  grid.appendChild(div);
+});
 
-  function updateRecipientDisplay() {
-    const profil = document.querySelector('input[name="modal-profil"]:checked').value;
-    const ccRow = document.getElementById('modal-cc-row');
-    if (profil === 'solidaire') {
+// ─── POPULATE SELECT ────────────────────────────────────
+const sel = document.getElementById('field-ecole');
+schools.forEach(s => {
+  const o = document.createElement('option');
+  o.value = s.nom;
+  o.textContent = s.nom + ' (' + s.arr.replace('130','') + 'e)';
+  sel.appendChild(o);
+});
+
+// ─── RECIPIENT ──────────────────────────────────────────
+let currentCircoEmail = null;
+
+function updateRecipientDisplay() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  const ccRow = document.getElementById('modal-cc-row');
+  if (profil === 'solidaire') {
+    currentCircoEmail = null;
+    ccRow.style.display = 'none';
+  } else {
+    const school = schoolByName[document.getElementById('field-ecole').value];
+    if (school) {
+      currentCircoEmail = circoEmail(school.code_circo);
+      document.getElementById('modal-cc-content').innerHTML =
+        `<a class="mr-email" href="mailto:${currentCircoEmail}">${currentCircoEmail}</a> <span class="mr-circo">IEN – Circo ${school.circo}</span>`;
+      ccRow.style.display = 'flex';
+    } else {
       currentCircoEmail = null;
       ccRow.style.display = 'none';
-    } else {
-      const school = schoolByName[document.getElementById('field-ecole').value];
-      if (school) {
-        currentCircoEmail = circoEmail(school.code_circo);
-        document.getElementById('modal-cc-content').innerHTML =
-                `<a class="mr-email" href="mailto:${currentCircoEmail}">${currentCircoEmail}</a> <span class="mr-circo">IEN – Circo ${school.circo}</span>`;
-        ccRow.style.display = 'flex';
-      } else {
-        currentCircoEmail = null;
-        ccRow.style.display = 'none';
-      }
     }
   }
-
-  function onProfilChange() {
-    const profil = document.querySelector('input[name="modal-profil"]:checked').value;
-    document.getElementById('modal-bloc-concerne').style.display  = profil === 'concerne'  ? 'block' : 'none';
-    document.getElementById('modal-bloc-solidaire').style.display = profil === 'solidaire' ? 'block' : 'none';
-    updateRecipientDisplay();
-    refreshMsg();
-  }
-
-  function onModalSchoolChange() { updateRecipientDisplay(); refreshMsg(); }
-
-  function copyEmailAddresses() {
-    const addresses = currentCircoEmail ? DSDEN_EMAIL + '\n' + currentCircoEmail : DSDEN_EMAIL;
-    navigator.clipboard.writeText(addresses).then(() => {
-      const b = document.getElementById('btn-copy-emails');
-      b.textContent = '✅ Copié !';
-      setTimeout(() => b.textContent = '📋 Copier les adresses', 2000);
-    });
-  }
-
-  // ─── MESSAGE VARIANTS ───────────────────────────────────
-  let currentVariantIdx = 0;
-
-  const MSG_VARIANTS = [
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent d'élève à Marseille et je m'oppose au projet de suppression de 43 classes prévu à la rentrée 2026.\n\nCes fermetures, ${sl} interviennent alors que les effectifs sont stables ou en hausse. Elles dégradent des conditions d'enseignement déjà difficiles, notamment dans les écoles REP+.\n\nCe projet est la conséquence du budget d'austérité voté en février dernier. L'école publique ne doit pas en faire les frais.\n\nJe demande la suspension de ce projet et une concertation avec les familles, les enseignants et les élus.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nEn tant que parent d'élève à Marseille, je vous écris pour exprimer mon opposition aux 43 fermetures de classes prévues pour 2026.\n\n${e ? "L'école "+e+" est directement touchée." : "De nombreuses écoles marseillaises sont touchées."} Nos enfants méritent des classes à taille humaine.\n\nSupprimer des classes dans des écoles fragiles, c'est aggraver les inégalités que l'école publique est censée réduire.\n\nJe demande la reconsidération de ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nLe projet de carte scolaire 2026 prévoit 43 suppressions de classes à Marseille. Je m'y oppose fermement.\n\nCes mesures touchent en priorité les quartiers populaires et les écoles REP+. ${e ? "L'école "+e+" est concernée." : "Aucun arrondissement n'est épargné."}\n\nLe CDEN doit entendre les familles. Je compte sur vous pour défendre l'école publique marseillaise.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes prévues à Marseille pour 2026. ${e ? "L'école "+e+" est directement impactée." : "Des écoles de toute la ville sont impactées."}\n\nCes suppressions n'ont aucune justification pédagogique. Ce sont des choix budgétaires que les familles refusent.\n\nNos enfants ont besoin de plus d'école, pas de moins. Je demande la suspension de ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nParent d'élève à Marseille, je souhaite vous faire part de mon inquiétude face aux 43 suppressions de classes prévues pour 2026.\n\nChaque fermeture, c'est des effectifs qui augmentent et des enseignants surchargés. ${e ? "L'école "+e+" ne peut pas perdre une classe de plus." : "Nos écoles ne peuvent pas se permettre ces pertes."}\n\nJe vous demande de défendre le maintien de ces postes au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse les 43 fermetures de classes annoncées à Marseille. Ces décisions auront des conséquences directes sur la qualité de l'enseignement. ${e ? "À l'école "+e+", cette fermeture est particulièrement injuste." : "Dans toute la ville, les familles sont mobilisées."}\n\nL'école publique n'est pas une variable d'ajustement budgétaire.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes prévues à Marseille pour la rentrée 2026.\n\nDes classes plus chargées, c'est moins d'attention par élève, plus de difficultés pour les enseignants. ${e ? "L'école "+e+" est déjà en tension." : "Nos écoles sont déjà en tension."}\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent mobilisé contre les 43 fermetures de classes à Marseille en 2026. Ces suppressions touchent les écoles des quartiers populaires, déjà fragilisées. ${e ? "L'école "+e+" en fait partie." : "Pas un arrondissement n'est épargné."}\n\nCe n'est pas en retirant des moyens à l'école publique qu'on réduit les inégalités.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\n43 classes supprimées à Marseille alors que les besoins des familles n'ont jamais été aussi importants. ${e ? "L'école "+e+" est concernée." : "Des dizaines d'écoles sont concernées."}\n\nLes parents sont en colère et déterminés. Je vous demande de suspendre ce projet immédiatement.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe ne peux pas laisser passer le projet de 43 suppressions de classes sans réagir. L'école publique est le pilier de notre République. ${e ? "À "+e+", cette fermeture est vécue comme une injustice." : "Dans toute la ville, les familles refusent ces fermetures."}\n\nJe demande le retrait de ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe vis ces décisions de fermeture comme un abandon. Nos enfants ont besoin d'enseignants disponibles et de classes à effectifs raisonnables. ${e ? "À l'école "+e+", on ne peut pas perdre une classe." : "Dans nos écoles, on ne peut pas se permettre ces pertes."}\n\nJe vous demande de porter ce refus au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nDes classes surchargées, c'est moins de suivi individuel, des enseignants épuisés, des élèves qui décrochent. ${e ? "L'école "+e+" n'a pas besoin de moins, elle a besoin de plus." : "Nos écoles ont besoin de plus, pas de moins."}\n\nJe vous demande de défendre le maintien des postes lors du Conseil Départemental.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe proteste contre la suppression de 43 classes dans les écoles marseillaises. Ces fermetures interviennent dans des établissements déjà en difficulté, dans des quartiers où l'école est le seul filet de protection sociale. ${e ? "L'école "+e+" fait partie de ces établissements." : ""}\n\nJe vous demande de remettre en question cette politique.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes à Marseille pour 2026. ${e ? "À l'école "+e+", une classe de moins c'est des dizaines d'élèves en plus par groupe." : "Des dizaines d'élèves supplémentaires par classe, partout dans la ville."}\n\nJe vous demande de vous opposer à ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nFace aux 43 fermetures de classes prévues à Marseille, les parents se mobilisent. J'en fais partie. Ces suppressions sacrifient l'école publique. ${e ? "L'école "+e+" est touchée." : "Toute la ville est touchée."}\n\nL'éducation de nos enfants n'est pas négociable.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nNous refusons les 43 fermetures de classes annoncées à Marseille. 43 classes en moins, c'est 43 fois moins de chance pour des enfants qui en ont déjà peu. ${e ? "À l'école "+e+", chaque classe compte." : "Dans chaque école, chaque classe compte."}\n\nNous demandons que ce projet soit retiré avant le CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose au projet de carte scolaire 2026 qui prévoit 43 fermetures de classes à Marseille. Ces suppressions touchent en premier les écoles REP+, celles dont les élèves ont le plus besoin d'encadrement. C'est un non-sens pédagogique et social.\n\nJe vous demande de défendre ces postes au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nCe projet de suppression de 43 classes m'alarme en tant que parent. ${e ? "L'école "+e+" que fréquente mon enfant est concernée." : "Des écoles de toute la ville sont concernées."} Ces fermetures aggraveront les inégalités scolaires dans une ville qui en souffre déjà.\n\nJe vous demande d'empêcher ces fermetures.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe proteste contre les 43 suppressions de classes prévues à Marseille. Derrière chaque classe fermée, il y a des enfants dans des groupes surchargés, des enseignants dépassés, des familles qui perdent confiance.\n\nJe vous demande d'intervenir pour stopper ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nMon opposition totale au projet de fermeture de 43 classes pour 2026 : ce n'est pas avec moins d'enseignants que nous préparerons nos enfants à l'avenir. ${e ? "L'école "+e+" mérite mieux." : "Nos écoles méritent mieux."}\n\nJe vous demande de rejeter ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse que mon enfant subisse les conséquences de ces 43 fermetures. L'école publique est déjà sous tension à Marseille. Retirer des moyens maintenant, c'est aggraver la situation délibérément.\n\nJe vous demande de prendre position contre ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nCes fermetures de classes sont présentées comme inévitables. Elles ne le sont pas : elles sont le résultat d'un choix politique. Et les familles refusent ce choix.\n\nJe vous demande de défendre nos écoles.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nDes classes réduites, c'est des élèves qui décrochent, des enseignants épuisés, des familles qui perdent confiance. ${e ? "L'école "+e+" ne doit pas perdre cette classe." : ""}\n\nJe vous demande de suspendre ce projet et d'écouter les familles.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent mobilisé contre les fermetures de classes à Marseille pour 2026. Ces 43 suppressions s'inscrivent dans une logique comptable qui ignore la réalité du terrain.\n\nJe vous demande d'agir pour maintenir ces classes ouvertes.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe signifie mon opposition aux 43 fermetures de classes. Une école publique qui ferme des classes, c'est une école qui abandonne les plus fragiles.\n\nJe vous demande d'intervenir pour stopper ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nNos enfants ont le droit à une éducation de qualité, dans des classes à effectifs raisonnables. ${e ? "À l'école "+e+", ce droit est en danger." : "Ce droit est en danger dans toute la ville."}\n\nJe vous demande de porter ce message fort lors du CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose résolument aux 43 suppressions de classes à Marseille. Ces fermetures touchent les écoles des quartiers qui ont le moins et qui ont donc le plus besoin de l'école.\n\nJe vous demande de défendre le maintien de ces classes.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous interpelle sur le projet de fermeture de 43 classes. Je ne comprends pas comment justifier ces suppressions alors que les besoins des élèves sont croissants.\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nCes 43 fermetures de classes me révoltent en tant que parent et citoyen. L'école publique est le socle de notre société. La démanteler classe après classe, c'est fragiliser des générations entières.\n\nJe vous demande de tout mettre en œuvre pour empêcher ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 suppressions de classes à Marseille. Des effectifs plus lourds, c'est moins de réussite pour tous et encore plus d'inégalités.\n\nJe vous demande de rejeter ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nChaque classe fermée, c'est un signal envoyé aux familles : l'État se désengage. ${e ? "L'école "+e+" n'est pas à vendre." : "Nos écoles ne sont pas à vendre."}\n\nJe demande la suspension immédiate de ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous interpelle sur les 43 fermetures de classes prévues pour 2026. Ce projet ne prend pas en compte la réalité de nos quartiers : familles nombreuses, élèves qui ont besoin d'accompagnement, enseignants déjà surchargés.\n\nJe vous demande d'agir pour maintenir ces postes.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nLa question des 43 fermetures n'est pas seulement pédagogique : c'est une question de justice sociale. Fermer des classes dans les quartiers populaires, c'est creuser un fossé qui ne se referme pas.\n\nJe vous demande de défendre nos écoles au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse que mon enfant subisse les conséquences des 43 fermetures. Ces suppressions sont le résultat d'un budget d'austérité choisi. D'autres choix sont possibles.\n\nJe vous demande de peser de tout votre poids pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nFace aux 43 fermetures de classes annoncées, je ne pouvais pas rester sans réagir. L'école publique est ce qui nous permet de croire en l'égalité des chances.\n\nJe vous demande d'agir.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nCes 43 suppressions représentent 43 fois moins de moyens pour des enfants qui en ont besoin. Ce n'est pas ainsi que l'on construit une école de la réussite pour tous.\n\nJe demande que ce projet soit suspendu et reconsidéré.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nOn parle de vraies classes, de vrais élèves, de vrais enseignants. On parle de l'avenir de nos enfants.\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes. Ce projet ignore les réalités du terrain : inscriptions stables ou en hausse, enseignants à bout, familles sans alternative à l'école publique.\n\nJe vous demande de défendre nos écoles.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nCes fermetures sont injustes et contre-productives. Elles pénalisent les élèves les plus fragiles et découragent les enseignants les plus engagés.\n\nJe vous demande d'agir pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nNon aux 43 fermetures de classes à Marseille. Nos enfants n'ont pas à payer pour des décisions budgétaires qui les dépassent.\n\nJe vous demande d'intervenir au CDEN pour stopper ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nDerrière ces 43 chiffres, il y a des enfants qui perdent accès à une éducation de qualité et des familles qui s'inquiètent pour leur avenir.\n\nNous demandons le retrait de ce projet.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nMoins de classes, c'est plus d'élèves par groupe, moins d'attention individuelle, et plus d'échec scolaire. Ce n'est pas le projet d'école que nous défendons.\n\nJe vous demande d'agir pour préserver ces postes.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent d'élève à Marseille. Le projet de 43 fermetures de classes pour 2026 est inacceptable. Chaque suppression fragilise un peu plus l'école publique dans notre ville.\n\nJe vous demande de vous y opposer fermement.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nL'école publique à Marseille n'a pas besoin d'austérité, elle a besoin d'investissement. Ces 43 fermetures vont dans le mauvais sens.\n\nJe vous demande de défendre nos écoles au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'exprime en tant que parent marseillais : non aux 43 fermetures de classes prévues pour 2026. Ces décisions ne sont pas une fatalité. Elles peuvent être revues si la pression des familles est entendue.\n\nJe compte sur vous.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous écris pour vous demander de défendre les 43 classes menacées de fermeture à Marseille. Ces postes, ce sont des chances données à des enfants. Les supprimer, c'est leur retirer ces chances.\n\nJe vous demande d'agir.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nLes parents d'élèves marseillais sont mobilisés contre les 43 fermetures de classes prévues pour 2026. Cette mobilisation est forte, déterminée, et ne s'arrêtera pas tant que ce projet ne sera pas retiré.\n\nJe vous demande d'entendre ce message.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nLes 43 fermetures de classes à Marseille ne sont pas acceptables. Elles traduisent un désengagement de l'État envers l'école publique.\n\nJe vous demande de vous y opposer au CDEN.\n\nCordialement,\n${s}`,
-    (p,e,s,sl) => `Madame, Monsieur,\n\nJe termine ce message par l'essentiel : nos enfants ont besoin de plus d'école, pas de moins. Les 43 fermetures de classes prévues à Marseille vont à l'encontre de cette évidence.\n\nJe vous demande de défendre ce principe lors du Conseil Départemental de l'Éducation Nationale.\n\nCordialement,\n${s}`,
-  ];
-
-  const MSG_VARIANTS_SOL = [
-    (p,e,s) => `Madame, Monsieur,\n\nJe suis parent d'élève dans une école publique marseillaise non directement concernée par les fermetures annoncées, et je souhaite néanmoins vous faire part de mon opposition ferme à ce projet.\n\nL'école publique est un service public obligatoire. Sa dégradation nous concerne tous — pas seulement les parents des écoles listées. Ce qui arrive aujourd'hui à 43 classes peut demain toucher n'importe quel établissement.\n\nJe vous demande de défendre les moyens de l'école publique dans notre département.\n\nCordialement,\n${s}`,
-    (p,e,s) => `Madame, Monsieur,\n\nParent d'élève dans une école publique de Marseille${e ? " ("+e+")" : ""}, je vous écris au nom de l'attachement que je porte à l'école publique comme service public essentiel.\n\nCes 43 suppressions ne touchent pas seulement les familles concernées : elles envoient un signal inquiétant sur l'avenir de l'enseignement public dans notre ville. L'école publique est indivisible.\n\nJe vous demande de suspendre ce projet et d'engager un vrai dialogue avec les familles et les enseignants.\n\nCordialement,\n${s}`,
-    (p,e,s) => `Madame, Monsieur,\n\nJe vous contacte en tant que citoyen et parent d'élève${e ? " de l'école "+e : ""} : l'école publique est un bien commun, et ces fermetures nous concernent tous.\n\nL'Éducation Nationale est un service public universel. Réduire ses moyens à Marseille, c'est fragiliser l'ensemble du tissu éducatif et social de la ville.\n\nJe vous appelle à agir pour que chaque enfant de Marseille bénéficie des conditions d'apprentissage qu'il mérite.\n\nCordialement,\n${s}`,
-    (p,e,s) => `Madame, Monsieur,\n\nMême si l'école de mon enfant${e ? " ("+e+")" : ""} ne figure pas dans la liste des fermetures, je refuse de rester silencieux. Ces 43 suppressions de classes s'inscrivent dans une logique comptable que les familles marseillaises rejettent.\n\nL'école publique n'est pas une variable d'ajustement. C'est le fondement de l'égalité des chances.\n\nAu nom de l'école publique que nous devons à tous les enfants, je vous demande de revenir sur ces décisions.\n\nCordialement,\n${s}`,
-  ];
-
-  function buildMessage() {
-    const profil = document.querySelector('input[name="modal-profil"]:checked').value;
-    if (profil === 'solidaire') {
-      const p = document.getElementById('field-prenom-sol').value.trim();
-      const e = document.getElementById('field-ecole-sol').value.trim();
-      const s = p || "Un parent d'élève de Marseille";
-      return MSG_VARIANTS_SOL[currentVariantIdx % MSG_VARIANTS_SOL.length](p, e, s);
-    } else {
-      const p  = document.getElementById('field-prenom').value.trim();
-      const e  = document.getElementById('field-ecole').value;
-      const s  = p || "Un parent d'élève de Marseille";
-      const sl = e ? "notamment celle de l'école " + e + "," : "dans plusieurs arrondissements de Marseille,";
-      return MSG_VARIANTS[currentVariantIdx](p, e, s, sl);
-    }
-  }
-
-  function shuffleMessage() {
-    const profil = document.querySelector('input[name="modal-profil"]:checked').value;
-    const total = profil === 'solidaire' ? MSG_VARIANTS_SOL.length : MSG_VARIANTS.length;
-    currentVariantIdx = (currentVariantIdx + 1) % total;
-    document.getElementById('field-message').value = buildMessage();
-    const badge = document.getElementById('variant-badge');
-    if (badge) badge.textContent = (currentVariantIdx + 1) + '/' + total;
-updateMailtoLink();
-  }
-
-  function refreshMsg() { document.getElementById('field-message').value = buildMessage(); 
-updateMailtoLink();
 }
-  document.getElementById('field-prenom').addEventListener('input', refreshMsg);
-  document.getElementById('field-prenom-sol').addEventListener('input', refreshMsg);
-  document.getElementById('field-ecole-sol').addEventListener('input', refreshMsg);
 
-  function openModal() {
-    document.querySelector('input[name="modal-profil"][value="concerne"]').checked = true;
-    onProfilChange();
-    currentVariantIdx = Math.floor(Math.random() * MSG_VARIANTS.length);
-    refreshMsg();
-    const badge = document.getElementById('variant-badge');
-    if (badge) badge.textContent = (currentVariantIdx + 1) + '/50';
-    document.getElementById('overlay').classList.add('open');
-    document.getElementById('form-view').style.display = 'block';
-    document.getElementById('success-view').style.display = 'none';
+function onProfilChange() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  document.getElementById('modal-bloc-concerne').style.display  = profil === 'concerne'  ? 'block' : 'none';
+  document.getElementById('modal-bloc-solidaire').style.display = profil === 'solidaire' ? 'block' : 'none';
+  updateRecipientDisplay();
+  refreshMsg();
+}
+
+function onModalSchoolChange() { updateRecipientDisplay(); refreshMsg(); }
+
+function copyEmailAddresses() {
+  const addresses = currentCircoEmail ? DSDEN_EMAIL + '\n' + currentCircoEmail : DSDEN_EMAIL;
+  navigator.clipboard.writeText(addresses).then(() => {
+    const b = document.getElementById('btn-copy-emails');
+    b.textContent = '✅ Copié !';
+    setTimeout(() => b.textContent = '📋 Copier les adresses', 2000);
+  });
+}
+
+// ─── MESSAGE VARIANTS ───────────────────────────────────
+let currentVariantIdx = 0;
+
+const MSG_VARIANTS = [
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent d'élève à Marseille et je m'oppose au projet de suppression de 43 classes prévu à la rentrée 2026.\n\nCes fermetures, ${sl} interviennent alors que les effectifs sont stables ou en hausse. Elles dégradent des conditions d'enseignement déjà difficiles, notamment dans les écoles REP+.\n\nCe projet est la conséquence du budget d'austérité voté en février dernier. L'école publique ne doit pas en faire les frais.\n\nJe demande la suspension de ce projet et une concertation avec les familles, les enseignants et les élus.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nEn tant que parent d'élève à Marseille, je vous écris pour exprimer mon opposition aux 43 fermetures de classes prévues pour 2026.\n\n${e ? "L'école "+e+" est directement touchée." : "De nombreuses écoles marseillaises sont touchées."} Nos enfants méritent des classes à taille humaine.\n\nSupprimer des classes dans des écoles fragiles, c'est aggraver les inégalités que l'école publique est censée réduire.\n\nJe demande la reconsidération de ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nLe projet de carte scolaire 2026 prévoit 43 suppressions de classes à Marseille. Je m'y oppose fermement.\n\nCes mesures touchent en priorité les quartiers populaires et les écoles REP+. ${e ? "L'école "+e+" est concernée." : "Aucun arrondissement n'est épargné."}\n\nLe CDEN doit entendre les familles. Je compte sur vous pour défendre l'école publique marseillaise.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes prévues à Marseille pour 2026. ${e ? "L'école "+e+" est directement impactée." : "Des écoles de toute la ville sont impactées."}\n\nCes suppressions n'ont aucune justification pédagogique. Ce sont des choix budgétaires que les familles refusent.\n\nNos enfants ont besoin de plus d'école, pas de moins. Je demande la suspension de ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nParent d'élève à Marseille, je souhaite vous faire part de mon inquiétude face aux 43 suppressions de classes prévues pour 2026.\n\nChaque fermeture, c'est des effectifs qui augmentent et des enseignants surchargés. ${e ? "L'école "+e+" ne peut pas perdre une classe de plus." : "Nos écoles ne peuvent pas se permettre ces pertes."}\n\nJe vous demande de défendre le maintien de ces postes au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse les 43 fermetures de classes annoncées à Marseille. Ces décisions auront des conséquences directes sur la qualité de l'enseignement. ${e ? "À l'école "+e+", cette fermeture est particulièrement injuste." : "Dans toute la ville, les familles sont mobilisées."}\n\nL'école publique n'est pas une variable d'ajustement budgétaire.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes prévues à Marseille pour la rentrée 2026.\n\nDes classes plus chargées, c'est moins d'attention par élève, plus de difficultés pour les enseignants. ${e ? "L'école "+e+" est déjà en tension." : "Nos écoles sont déjà en tension."}\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent mobilisé contre les 43 fermetures de classes à Marseille en 2026. Ces suppressions touchent les écoles des quartiers populaires, déjà fragilisées. ${e ? "L'école "+e+" en fait partie." : "Pas un arrondissement n'est épargné."}\n\nCe n'est pas en retirant des moyens à l'école publique qu'on réduit les inégalités.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\n43 classes supprimées à Marseille alors que les besoins des familles n'ont jamais été aussi importants. ${e ? "L'école "+e+" est concernée." : "Des dizaines d'écoles sont concernées."}\n\nLes parents sont en colère et déterminés. Je vous demande de suspendre ce projet immédiatement.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe ne peux pas laisser passer le projet de 43 suppressions de classes sans réagir. L'école publique est le pilier de notre République. ${e ? "À "+e+", cette fermeture est vécue comme une injustice." : "Dans toute la ville, les familles refusent ces fermetures."}\n\nJe demande le retrait de ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe vis ces décisions de fermeture comme un abandon. Nos enfants ont besoin d'enseignants disponibles et de classes à effectifs raisonnables. ${e ? "À l'école "+e+", on ne peut pas perdre une classe." : "Dans nos écoles, on ne peut pas se permettre ces pertes."}\n\nJe vous demande de porter ce refus au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nDes classes surchargées, c'est moins de suivi individuel, des enseignants épuisés, des élèves qui décrochent. ${e ? "L'école "+e+" n'a pas besoin de moins, elle a besoin de plus." : "Nos écoles ont besoin de plus, pas de moins."}\n\nJe vous demande de défendre le maintien des postes lors du Conseil Départemental.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe proteste contre la suppression de 43 classes dans les écoles marseillaises. Ces fermetures interviennent dans des établissements déjà en difficulté, dans des quartiers où l'école est le seul filet de protection sociale. ${e ? "L'école "+e+" fait partie de ces établissements." : ""}\n\nJe vous demande de remettre en question cette politique.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes à Marseille pour 2026. ${e ? "À l'école "+e+", une classe de moins c'est des dizaines d'élèves en plus par groupe." : "Des dizaines d'élèves supplémentaires par classe, partout dans la ville."}\n\nJe vous demande de vous opposer à ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nFace aux 43 fermetures de classes prévues à Marseille, les parents se mobilisent. J'en fais partie. Ces suppressions sacrifient l'école publique. ${e ? "L'école "+e+" est touchée." : "Toute la ville est touchée."}\n\nL'éducation de nos enfants n'est pas négociable.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nNous refusons les 43 fermetures de classes annoncées à Marseille. 43 classes en moins, c'est 43 fois moins de chance pour des enfants qui en ont déjà peu. ${e ? "À l'école "+e+", chaque classe compte." : "Dans chaque école, chaque classe compte."}\n\nNous demandons que ce projet soit retiré avant le CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose au projet de carte scolaire 2026 qui prévoit 43 fermetures de classes à Marseille. Ces suppressions touchent en premier les écoles REP+, celles dont les élèves ont le plus besoin d'encadrement. C'est un non-sens pédagogique et social.\n\nJe vous demande de défendre ces postes au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nCe projet de suppression de 43 classes m'alarme en tant que parent. ${e ? "L'école "+e+" que fréquente mon enfant est concernée." : "Des écoles de toute la ville sont concernées."} Ces fermetures aggraveront les inégalités scolaires dans une ville qui en souffre déjà.\n\nJe vous demande d'empêcher ces fermetures.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe proteste contre les 43 suppressions de classes prévues à Marseille. Derrière chaque classe fermée, il y a des enfants dans des groupes surchargés, des enseignants dépassés, des familles qui perdent confiance.\n\nJe vous demande d'intervenir pour stopper ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nMon opposition totale au projet de fermeture de 43 classes pour 2026 : ce n'est pas avec moins d'enseignants que nous préparerons nos enfants à l'avenir. ${e ? "L'école "+e+" mérite mieux." : "Nos écoles méritent mieux."}\n\nJe vous demande de rejeter ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse que mon enfant subisse les conséquences de ces 43 fermetures. L'école publique est déjà sous tension à Marseille. Retirer des moyens maintenant, c'est aggraver la situation délibérément.\n\nJe vous demande de prendre position contre ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nCes fermetures de classes sont présentées comme inévitables. Elles ne le sont pas : elles sont le résultat d'un choix politique. Et les familles refusent ce choix.\n\nJe vous demande de défendre nos écoles.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nDes classes réduites, c'est des élèves qui décrochent, des enseignants épuisés, des familles qui perdent confiance. ${e ? "L'école "+e+" ne doit pas perdre cette classe." : ""}\n\nJe vous demande de suspendre ce projet et d'écouter les familles.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent mobilisé contre les fermetures de classes à Marseille pour 2026. Ces 43 suppressions s'inscrivent dans une logique comptable qui ignore la réalité du terrain.\n\nJe vous demande d'agir pour maintenir ces classes ouvertes.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe signifie mon opposition aux 43 fermetures de classes. Une école publique qui ferme des classes, c'est une école qui abandonne les plus fragiles.\n\nJe vous demande d'intervenir pour stopper ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nNos enfants ont le droit à une éducation de qualité, dans des classes à effectifs raisonnables. ${e ? "À l'école "+e+", ce droit est en danger." : "Ce droit est en danger dans toute la ville."}\n\nJe vous demande de porter ce message fort lors du CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose résolument aux 43 suppressions de classes à Marseille. Ces fermetures touchent les écoles des quartiers qui ont le moins et qui ont donc le plus besoin de l'école.\n\nJe vous demande de défendre le maintien de ces classes.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous interpelle sur le projet de fermeture de 43 classes. Je ne comprends pas comment justifier ces suppressions alors que les besoins des élèves sont croissants.\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nCes 43 fermetures de classes me révoltent en tant que parent et citoyen. L'école publique est le socle de notre société. La démanteler classe après classe, c'est fragiliser des générations entières.\n\nJe vous demande de tout mettre en œuvre pour empêcher ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 suppressions de classes à Marseille. Des effectifs plus lourds, c'est moins de réussite pour tous et encore plus d'inégalités.\n\nJe vous demande de rejeter ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nChaque classe fermée, c'est un signal envoyé aux familles : l'État se désengage. ${e ? "L'école "+e+" n'est pas à vendre." : "Nos écoles ne sont pas à vendre."}\n\nJe demande la suspension immédiate de ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous interpelle sur les 43 fermetures de classes prévues pour 2026. Ce projet ne prend pas en compte la réalité de nos quartiers : familles nombreuses, élèves qui ont besoin d'accompagnement, enseignants déjà surchargés.\n\nJe vous demande d'agir pour maintenir ces postes.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nLa question des 43 fermetures n'est pas seulement pédagogique : c'est une question de justice sociale. Fermer des classes dans les quartiers populaires, c'est creuser un fossé qui ne se referme pas.\n\nJe vous demande de défendre nos écoles au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe refuse que mon enfant subisse les conséquences des 43 fermetures. Ces suppressions sont le résultat d'un budget d'austérité choisi. D'autres choix sont possibles.\n\nJe vous demande de peser de tout votre poids pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nFace aux 43 fermetures de classes annoncées, je ne pouvais pas rester sans réagir. L'école publique est ce qui nous permet de croire en l'égalité des chances.\n\nJe vous demande d'agir.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nCes 43 suppressions représentent 43 fois moins de moyens pour des enfants qui en ont besoin. Ce n'est pas ainsi que l'on construit une école de la réussite pour tous.\n\nJe demande que ce projet soit suspendu et reconsidéré.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nOn parle de vraies classes, de vrais élèves, de vrais enseignants. On parle de l'avenir de nos enfants.\n\nJe vous demande de vous opposer à ce projet lors du Conseil Départemental.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'oppose aux 43 fermetures de classes. Ce projet ignore les réalités du terrain : inscriptions stables ou en hausse, enseignants à bout, familles sans alternative à l'école publique.\n\nJe vous demande de défendre nos écoles.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nCes fermetures sont injustes et contre-productives. Elles pénalisent les élèves les plus fragiles et découragent les enseignants les plus engagés.\n\nJe vous demande d'agir pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nNon aux 43 fermetures de classes à Marseille. Nos enfants n'ont pas à payer pour des décisions budgétaires qui les dépassent.\n\nJe vous demande d'intervenir au CDEN pour stopper ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nDerrière ces 43 chiffres, il y a des enfants qui perdent accès à une éducation de qualité et des familles qui s'inquiètent pour leur avenir.\n\nNous demandons le retrait de ce projet.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nMoins de classes, c'est plus d'élèves par groupe, moins d'attention individuelle, et plus d'échec scolaire. Ce n'est pas le projet d'école que nous défendons.\n\nJe vous demande d'agir pour préserver ces postes.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe suis parent d'élève à Marseille. Le projet de 43 fermetures de classes pour 2026 est inacceptable. Chaque suppression fragilise un peu plus l'école publique dans notre ville.\n\nJe vous demande de vous y opposer fermement.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nL'école publique à Marseille n'a pas besoin d'austérité, elle a besoin d'investissement. Ces 43 fermetures vont dans le mauvais sens.\n\nJe vous demande de défendre nos écoles au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe m'exprime en tant que parent marseillais : non aux 43 fermetures de classes prévues pour 2026. Ces décisions ne sont pas une fatalité. Elles peuvent être revues si la pression des familles est entendue.\n\nJe compte sur vous.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe vous écris pour vous demander de défendre les 43 classes menacées de fermeture à Marseille. Ces postes, ce sont des chances données à des enfants. Les supprimer, c'est leur retirer ces chances.\n\nJe vous demande d'agir.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nLes parents d'élèves marseillais sont mobilisés contre les 43 fermetures de classes prévues pour 2026. Cette mobilisation est forte, déterminée, et ne s'arrêtera pas tant que ce projet ne sera pas retiré.\n\nJe vous demande d'entendre ce message.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nLes 43 fermetures de classes à Marseille ne sont pas acceptables. Elles traduisent un désengagement de l'État envers l'école publique.\n\nJe vous demande de vous y opposer au CDEN.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Madame, Monsieur,\n\nJe termine ce message par l'essentiel : nos enfants ont besoin de plus d'école, pas de moins. Les 43 fermetures de classes prévues à Marseille vont à l'encontre de cette évidence.\n\nJe vous demande de défendre ce principe lors du Conseil Départemental de l'Éducation Nationale.\n\nCordialement,\n${s}`,
+];
+
+const MSG_VARIANTS_SOL = [
+  (p,e,s) => `Madame, Monsieur,\n\nJe suis parent d'élève dans une école publique marseillaise non directement concernée par les fermetures annoncées, et je souhaite néanmoins vous faire part de mon opposition ferme à ce projet.\n\nL'école publique est un service public obligatoire. Sa dégradation nous concerne tous — pas seulement les parents des écoles listées. Ce qui arrive aujourd'hui à 43 classes peut demain toucher n'importe quel établissement.\n\nJe vous demande de défendre les moyens de l'école publique dans notre département.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nParent d'élève dans une école publique de Marseille${e ? " ("+e+")" : ""}, je vous écris au nom de l'attachement que je porte à l'école publique comme service public essentiel.\n\nCes 43 suppressions ne touchent pas seulement les familles concernées : elles envoient un signal inquiétant sur l'avenir de l'enseignement public dans notre ville. L'école publique est indivisible.\n\nJe vous demande de suspendre ce projet et d'engager un vrai dialogue avec les familles et les enseignants.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nJe vous contacte en tant que citoyen et parent d'élève${e ? " de l'école "+e : ""} : l'école publique est un bien commun, et ces fermetures nous concernent tous.\n\nL'Éducation Nationale est un service public universel. Réduire ses moyens à Marseille, c'est fragiliser l'ensemble du tissu éducatif et social de la ville.\n\nJe vous appelle à agir pour que chaque enfant de Marseille bénéficie des conditions d'apprentissage qu'il mérite.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Madame, Monsieur,\n\nMême si l'école de mon enfant${e ? " ("+e+")" : ""} ne figure pas dans la liste des fermetures, je refuse de rester silencieux. Ces 43 suppressions de classes s'inscrivent dans une logique comptable que les familles marseillaises rejettent.\n\nL'école publique n'est pas une variable d'ajustement. C'est le fondement de l'égalité des chances.\n\nAu nom de l'école publique que nous devons à tous les enfants, je vous demande de revenir sur ces décisions.\n\nCordialement,\n${s}`,
+];
+
+function buildMessage() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  if (profil === 'solidaire') {
+    const p = document.getElementById('field-prenom-sol').value.trim();
+    const e = document.getElementById('field-ecole-sol').value.trim();
+    const s = p || "Un parent d'élève de Marseille";
+    return MSG_VARIANTS_SOL[currentVariantIdx % MSG_VARIANTS_SOL.length](p, e, s);
+  } else {
+    const p  = document.getElementById('field-prenom').value.trim();
+    const e  = document.getElementById('field-ecole').value;
+    const s  = p || "Un parent d'élève de Marseille";
+    const sl = e ? "notamment celle de l'école " + e + "," : "dans plusieurs arrondissements de Marseille,";
+    return MSG_VARIANTS[currentVariantIdx](p, e, s, sl);
   }
+}
 
-  function closeModal() { document.getElementById('overlay').classList.remove('open'); }
-  function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+function shuffleMessage() {
+  const profil = document.querySelector('input[name="modal-profil"]:checked').value;
+  const total = profil === 'solidaire' ? MSG_VARIANTS_SOL.length : MSG_VARIANTS.length;
+  currentVariantIdx = (currentVariantIdx + 1) % total;
+  document.getElementById('field-message').value = buildMessage();
+  const badge = document.getElementById('variant-badge');
+  if (badge) badge.textContent = (currentVariantIdx + 1) + '/' + total;
+}
 
-  function updateMailtoLink() {
+function refreshMsg() { document.getElementById('field-message').value = buildMessage(); }
+document.getElementById('field-prenom').addEventListener('input', refreshMsg);
+document.getElementById('field-prenom-sol').addEventListener('input', refreshMsg);
+document.getElementById('field-ecole-sol').addEventListener('input', refreshMsg);
+
+function openModal() {
+  document.querySelector('input[name="modal-profil"][value="concerne"]').checked = true;
+  onProfilChange();
+  currentVariantIdx = Math.floor(Math.random() * MSG_VARIANTS.length);
+  refreshMsg();
+  const badge = document.getElementById('variant-badge');
+  if (badge) badge.textContent = (currentVariantIdx + 1) + '/50';
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('form-view').style.display = 'block';
+  document.getElementById('success-view').style.display = 'none';
+}
+function closeModal() { document.getElementById('overlay').classList.remove('open'); }
+function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
+
+function sendMessage() {
   const msg = document.getElementById('field-message').value;
   let mailto = 'mailto:' + DSDEN_EMAIL;
   if (currentCircoEmail) {
-    mailto += '?cc=' + encodeURIComponent(currentCircoEmail)
-      + '&subject=' + encodeURIComponent(SUBJECT)
-      + '&body=' + encodeURIComponent(msg);
+    mailto += '?cc=' + encodeURIComponent(currentCircoEmail) + '&subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
   } else {
-    mailto += '?subject=' + encodeURIComponent(SUBJECT)
-      + '&body=' + encodeURIComponent(msg);
+    mailto += '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
   }
-  const link = document.getElementById('btn-send-link');
-  if (link) link.href = mailto;
+
+  // window.location.href est la méthode la plus compatible tous navigateurs mobiles
+  window.location.href = mailto;
+
+  // Incrément et affichage succès en différé (laisse le temps au navigateur d'ouvrir le mail)
+  setTimeout(() => {
+    incrementCounter();
+    document.getElementById('form-view').style.display = 'none';
+    document.getElementById('success-view').style.display = 'block';
+  }, 300);
 }
 
-function onMailSent() {
-  incrementCounter();
-  document.getElementById('form-view').style.display = 'none';
-  document.getElementById('success-view').style.display = 'block';
+function copyMessage() {
+  navigator.clipboard.writeText(document.getElementById('field-message').value).then(() => {
+    const b = document.getElementById('copy-msg-btn');
+    b.textContent = '✅ Copié !';
+    setTimeout(() => b.textContent = '📋 Copier', 2000);
+  });
 }
 
-  function copyMessage() {
-    navigator.clipboard.writeText(document.getElementById('field-message').value).then(() => {
-      const b = document.getElementById('copy-msg-btn');
-      b.textContent = '✅ Copié !';
-      setTimeout(() => b.textContent = '📋 Copier', 2000);
-    });
-  }
+const pageUrl = encodeURIComponent(window.location.href);
+const txt = encodeURIComponent('43 classes supprimées à Marseille. Envoyez un message en 2 min :');
+function shareWhatsApp() { window.location.href = 'https://wa.me/?text=' + txt + '%20' + pageUrl; }
+function shareFacebook() { window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl; }
+function shareTwitter()  { window.location.href = 'https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl; }
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    const b = document.getElementById('copy-link-btn');
+    b.textContent = '✅ Copié !'; setTimeout(() => b.textContent = '🔗 Copier le lien', 2000);
+  });
+}
 
-  const pageUrl = encodeURIComponent(window.location.href);
-  const txt = encodeURIComponent('43 classes supprimées à Marseille. Envoyez un message en 2 min :');
-  function shareWhatsApp() { window.location.href = 'https://wa.me/?text=' + txt + '%20' + pageUrl; }
-  function shareFacebook() { window.location.href = 'https://www.facebook.com/sharer/sharer.php?u=' + pageUrl; }
-  function shareTwitter()  { window.location.href = 'https://twitter.com/intent/tweet?text=' + txt + '&url=' + pageUrl; }
-  function copyLink() {
-    navigator.clipboard.writeText(window.location.href).then(() => {
-      const b = document.getElementById('copy-link-btn');
-      b.textContent = '✅ Copié !'; setTimeout(() => b.textContent = '🔗 Copier le lien', 2000);
-    });
-  }
+async function subscribeNewsletter(ev) {
+  ev.preventDefault();
+  const email = document.getElementById('nl-email').value.trim();
+  const arr   = document.getElementById('nl-arr').value;
+  const fb    = document.getElementById('nl-feedback');
+  fb.textContent = '…'; fb.className = 'nl-feedback';
+  try {
+    const res  = await fetch('/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, arrondissement:arr}) });
+    const data = await res.json();
+    fb.textContent = data.message || data.error || 'OK';
+    fb.className   = 'nl-feedback ' + (data.ok ? 'ok' : 'err');
+    if (data.ok) { document.getElementById('nl-email').value=''; document.getElementById('nl-arr').value=''; }
+  } catch(e) { fb.textContent='Erreur réseau, réessayez.'; fb.className='nl-feedback err'; }
+}
 
-  async function subscribeNewsletter(ev) {
-    ev.preventDefault();
-    const email = document.getElementById('nl-email').value.trim();
-    const arr   = document.getElementById('nl-arr').value;
-    const fb    = document.getElementById('nl-feedback');
-    fb.textContent = '…'; fb.className = 'nl-feedback';
-    try {
-      const res  = await fetch('/subscribe', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({email, arrondissement:arr}) });
-      const data = await res.json();
-      fb.textContent = data.message || data.error || 'OK';
-      fb.className   = 'nl-feedback ' + (data.ok ? 'ok' : 'err');
-      if (data.ok) { document.getElementById('nl-email').value=''; document.getElementById('nl-arr').value=''; }
-    } catch(e) { fb.textContent='Erreur réseau, réessayez.'; fb.className='nl-feedback err'; }
-  }
+// ─── SCHOOLS MAP ────────────────────────────────────────
+const MAP_SCHOOLS = [
+  { arr:"13001", nom:"HOTEL DES POSTES", ep:"REP+", code_circo:"0131308B", lat:43.298924, lon:5.374468, mesures:["fermeture"] },
+  { arr:"13002", nom:"DAMES (DES)", ep:"REP+", code_circo:"0131308B", lat:43.301597, lon:5.372003, mesures:["fermeture"] },
+  { arr:"13002", nom:"MOULINS", ep:"REP+", code_circo:"0133619N", lat:43.298200, lon:5.367920, mesures:["fermeture"] },
+  { arr:"13002", nom:"ACCOULES", ep:null, code_circo:"0133619N", lat:43.297520, lon:5.367040, mesures:["fermeture"] },
+  { arr:"13003", nom:"BERNARD CADENAT", ep:"REP+", code_circo:"0131310D", lat:43.312426, lon:5.386480, mesures:["fermeture"] },
+  { arr:"13004", nom:"BOISSON", ep:null, code_circo:"0131303W", lat:43.296342, lon:5.404080, mesures:["fermeture"] },
+  { arr:"13004", nom:"LONGCHAMP", ep:null, code_circo:"0133284Z", lat:43.303639, lon:5.395589, mesures:["fermeture"] },
+  { arr:"13004", nom:"SAINT VINCENT DE PAUL", ep:null, code_circo:"0133284Z", lat:43.300239, lon:5.391666, mesures:["fermeture"] },
+  { arr:"13005", nom:"CHAVE", ep:null, code_circo:"0131301U", lat:43.295825, lon:5.402500, mesures:["fermeture"] },
+  { arr:"13005", nom:"LOUBIERE", ep:null, code_circo:"0131298R", lat:43.289715, lon:5.391210, mesures:["fermeture"] },
+  { arr:"13005", nom:"ABBE DE L'EPEE", ep:null, code_circo:"0133284Z", lat:43.297386, lon:5.399300, mesures:["fermeture"] },
+  { arr:"13005", nom:"ALEXANDRE COPELLO", ep:null, code_circo:"0131298R", lat:43.293931, lon:5.391360, mesures:["fermeture"] },
+  { arr:"13005", nom:"OLIVIER GILLIBERT", ep:null, code_circo:"0131298R", lat:43.294249, lon:5.395000, mesures:["fermeture"] },
+  { arr:"13005", nom:"FRANKLIN ROOSEVELT", ep:null, code_circo:"0133284Z", lat:43.298160, lon:5.389270, mesures:["fermeture"] },
+  { arr:"13006", nom:"FRIEDLAND", ep:null, code_circo:"0131298R", lat:43.286236, lon:5.388770, mesures:["fermeture"] },
+  { arr:"13006", nom:"JEAN FIOLLE", ep:null, code_circo:"0131298R", lat:43.283814, lon:5.378971, mesures:["fermeture"] },
+  { arr:"13006", nom:"LODI", ep:null, code_circo:"0131298R", lat:43.286862, lon:5.389940, mesures:["fermeture"] },
+  { arr:"13006", nom:"FIOLLE-FALQUE", ep:null, code_circo:"0131298R", lat:43.284093, lon:5.379179, mesures:["fermeture"] },
+  { arr:"13007", nom:"PHARO CATALANS", ep:null, code_circo:"0133619N", lat:43.292139, lon:5.355730, mesures:["fermeture"] },
+  { arr:"13008", nom:"SAINTE ANNE", ep:null, code_circo:"0131306Z", lat:43.255665, lon:5.393940, mesures:["fermeture"] },
+  { arr:"13008", nom:"ROY D'ESPAGNE", ep:null, code_circo:"0131306Z", lat:43.240048, lon:5.385980, mesures:["fermeture"] },
+  { arr:"13009", nom:"SQUARE MICHELET", ep:null, code_circo:"0131298R", lat:43.267217, lon:5.397290, mesures:["fermeture"] },
+  { arr:"13009", nom:"ROUVIERE (LA)", ep:null, code_circo:"0131298R", lat:43.251157, lon:5.423921, mesures:["fermeture"] },
+  { arr:"13009", nom:"CHATEAU SEC", ep:null, code_circo:"0131298R", lat:43.254133, lon:5.408490, mesures:["fermeture"] },
+  { arr:"13009", nom:"CABOT", ep:null, code_circo:"0131301U", lat:43.257720, lon:5.419255, mesures:["fermeture"] },
+  { arr:"13010", nom:"SAINT LOUP GABRIEL FAURE", ep:null, code_circo:"0131302V", lat:43.281471, lon:5.433230, mesures:["fermeture"] },
+  { arr:"13012", nom:"BEAUMONT BOMBARDIERE", ep:null, code_circo:"0131303W", lat:43.317337, lon:5.437999, mesures:["fermeture"] },
+  { arr:"13012", nom:"OLYMPE DE GOUGES", ep:null, code_circo:"0131303W", lat:43.300816, lon:5.409930, mesures:["fermeture"] },
+  { arr:"13012", nom:"SAINT BARNABE", ep:null, code_circo:"0131303W", lat:43.304951, lon:5.414690, mesures:["fermeture"] },
+  { arr:"13012", nom:"BOIS LUZY", ep:null, code_circo:"0131303W", lat:43.312148, lon:5.427150, mesures:["fermeture"] },
+  { arr:"13013", nom:"ROSE LA GARDE", ep:"REP+", code_circo:"0131309C", lat:43.335400, lon:5.426401, mesures:["fermeture"] },
+  { arr:"13013", nom:"MALPASSE LES OLIVIERS", ep:"REP+", code_circo:"0131310D", lat:43.326665, lon:5.408480, mesures:["fermeture"] },
+  { arr:"13013", nom:"MALPASSE", ep:null, code_circo:"0133284Z", lat:43.320694, lon:5.415360, mesures:["fermeture"] },
+  { arr:"13013", nom:"SAINT JEROME VILLAGE 1", ep:null, code_circo:"0131297P", lat:43.328979, lon:5.418850, mesures:["fermeture"] },
+  { arr:"13013", nom:"FONDACLE", ep:null, code_circo:"0131309C", lat:43.319966, lon:5.450360, mesures:["fermeture"] },
+  { arr:"13013", nom:"MARTEGAUX (LES)", ep:null, code_circo:"0131309C", lat:43.325856, lon:5.440719, mesures:["fermeture"] },
+  { arr:"13013", nom:"CHATEAU GOMBERT ATHENA", ep:null, code_circo:"0134099K", lat:43.337342, lon:5.445409, mesures:["fermeture"] },
+  { arr:"13014", nom:"BATARELLE (LA)", ep:null, code_circo:"0131309C", lat:43.355985, lon:5.410629, mesures:["fermeture"] },
+  { arr:"13015", nom:"N.D LIMITE CHATEAU BURZIO", ep:null, code_circo:"0131300T", lat:43.383238, lon:5.358757, mesures:["fermeture"] },
+  { arr:"13001", nom:"PARMENTIER", ep:"REP+", code_circo:"0133619N", lat:43.300094, lon:5.379521, mesures:["dedoublement"] },
+  { arr:"13001", nom:"MAURICE KORSEC", ep:"REP+", code_circo:"0133619N", lat:43.300515, lon:5.379460, mesures:["dedoublement"] },
+  { arr:"13002", nom:"DESIREE CLARY", ep:"REP+", code_circo:"0131308B", lat:43.308600, lon:5.370300, mesures:["dedoublement"] },
+  { arr:"13002", nom:"MONTOLIEU", ep:"REP+", code_circo:"0131308B", lat:43.303296, lon:5.372870, mesures:["dedoublement"] },
+  { arr:"13003", nom:"SAINT CHARLES", ep:"REP+", code_circo:"0133619N", lat:43.306127, lon:5.376330, mesures:["dedoublement"] },
+  { arr:"13003", nom:"VILLETTE FONSCOLOMBE", ep:"REP+", code_circo:"0131308B", lat:43.311319, lon:5.372650, mesures:["dedoublement"] },
+  { arr:"13003", nom:"E. VAILLANT (application)", ep:"REP+", code_circo:"0131305Y", lat:43.316114, lon:5.377860, mesures:["dedoublement"] },
+  { arr:"13003", nom:"SIMONE DE BEAUVOIR", ep:"REP+", code_circo:"0133619N", lat:43.308843, lon:5.384470, mesures:["dedoublement","ulis"] },
+  { arr:"13003", nom:"AHMED LITIM", ep:"REP+", code_circo:"0133619N", lat:43.307202, lon:5.384430, mesures:["dedoublement"] },
+  { arr:"13003", nom:"NATIONAL", ep:"REP+", code_circo:"0131310D", lat:43.308843, lon:5.384470, mesures:["dedoublement"] },
+  { arr:"13004", nom:"DAHDAH", ep:"REP+", code_circo:"0133284Z", lat:43.310442, lon:5.393910, mesures:["dedoublement"] },
+  { arr:"13006", nom:"PAIX", ep:"REP", code_circo:"0133619N", lat:43.291058, lon:5.373245, mesures:["dedoublement"] },
+  { arr:"13011", nom:"PARETTE MAZENODE", ep:"REP", code_circo:"0131302V", lat:43.286367, lon:5.429841, mesures:["dedoublement"] },
+  { arr:"13011", nom:"AIR BEL", ep:"REP", code_circo:"0131303W", lat:43.290654, lon:5.431091, mesures:["dedoublement"] },
+  { arr:"13013", nom:"MALPASSE LES LAURIERS", ep:"REP+", code_circo:"0131310D", lat:43.327147, lon:5.412710, mesures:["dedoublement"] },
+  { arr:"13014", nom:"EMILE VAYSSIERE 2", ep:"REP+", code_circo:"0131297P", lat:43.335288, lon:5.397061, mesures:["dedoublement"] },
+  { arr:"13015", nom:"CABUCELLE (LA)", ep:"REP+", code_circo:"0133618M", lat:43.333127, lon:5.358930, mesures:["dedoublement"] },
+  { arr:"13015", nom:"ARENC BACHAS EXTERIEUR", ep:"REP+", code_circo:"0131308B", lat:43.317221, lon:5.369153, mesures:["dedoublement"] },
+  { arr:"13015", nom:"PARC KALLISTE", ep:"REP+", code_circo:"0132716G", lat:43.385601, lon:5.365530, mesures:["dedoublement"] },
+  { arr:"13015", nom:"SAINT ANDRE BARNIER", ep:"REP+", code_circo:"0131300T", lat:43.364827, lon:5.341596, mesures:["dedoublement"] },
+  { arr:"13006", nom:"RESODYS (SESSAD)", ep:null, code_circo:"0131298R", lat:43.291058, lon:5.373245, mesures:["ulis"] },
+  { arr:"13008", nom:"PRADO (CMPP)", ep:null, code_circo:"0131306Z", lat:43.255665, lon:5.393940, mesures:["ulis"] },
+  { arr:"13009", nom:"PARADOU (IME)", ep:null, code_circo:"0131298R", lat:43.257720, lon:5.419255, mesures:["ulis"] },
+];
 
-  // ─── CARTE ──────────────────────────────────────────────
-  (function initMap() {
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-    script.onload = function () {
-      const lat = 43.3029393, lng = 5.3782730;
-      const map = L.map('dsden-map', { center:[lat,lng], zoom:16, scrollWheelZoom:false });
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom:19
-      }).addTo(map);
-      const icon = L.divIcon({
-        className:'',
-        html:`<div style="background:#c0392b;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
-        iconSize:[36,36], iconAnchor:[18,36], popupAnchor:[0,-38]
-      });
-      L.marker([lat,lng],{icon}).addTo(map)
-              .bindPopup('<strong style="font-size:.9rem">DSDEN 13</strong><br>28 bd Charles Nédelec, 13001 Marseille<br><span style="color:#c0392b;font-weight:600">📅 Vendredi 3 avril · 8h00</span>',{maxWidth:220})
-              .openPopup();
-    };
-    document.head.appendChild(script);
-  })();
+const CIRCO_LABELS = {
+  "0131297P":"Marseille Le Merlan","0131298R":"Marseille Mazargues","0131300T":"Marseille Estaque",
+  "0131301U":"Marseille Capelette","0131302V":"Marseille Huveaune","0131303W":"Marseille St Barnabé",
+  "0131305Y":"Marseille Le Canet","0131306Z":"Marseille Corniche","0131308B":"Marseille La Joliette",
+  "0131309C":"Marseille La Rose","0131310D":"Marseille Belle de Mai","0132716G":"Marseille Aygalades",
+  "0133284Z":"Marseille Longchamp","0133618M":"Marseille Madrague","0133619N":"Marseille St Charles",
+  "0134099K":"Allauch-Château Gombert",
+};
+
+const MAP_COLORS = { fermeture:'#c0392b', dedoublement:'#6c3fc5', ulis:'#1a7a63' };
+const MAP_LABELS = { fermeture:'Fermeture', dedoublement:'Dédoublement', ulis:'ULIS/Handicap' };
+const mapActive = { fermeture:true, dedoublement:true, ulis:true };
+let schoolsLeafletMap = null;
+
+function mapMainType(s) {
+  if (s.mesures.includes('ulis')) return 'ulis';
+  if (s.mesures.includes('dedoublement')) return 'dedoublement';
+  return 'fermeture';
+}
+
+function makeSchoolIcon(s) {
+  const color = MAP_COLORS[mapMainType(s)];
+  const multi = s.mesures.length > 1;
+  return L.divIcon({
+    className:'',
+    html:`<div style="width:${multi?20:16}px;height:${multi?20:16}px;background:${color};border:2.5px solid white;border-radius:50%;box-shadow:0 1px 5px rgba(0,0,0,.35);${multi?`outline:2px solid ${color};outline-offset:2px;`:''}"></div>`,
+    iconSize:[multi?20:16,multi?20:16], iconAnchor:[multi?10:8,multi?10:8], popupAnchor:[0,multi?-12:-10],
+  });
+}
+
+function makeSchoolPopup(s) {
+  const arrNum = s.arr.replace('130','') + 'e';
+  const email = s.code_circo ? `ce.${s.code_circo.toLowerCase()}@ac-aix-marseille.fr` : null;
+  const circo = CIRCO_LABELS[s.code_circo] || '';
+  const tags = s.mesures.map(m=>`<span style="font-size:.7rem;font-weight:700;padding:.1rem .4rem;border-radius:999px;margin-right:.25rem;background:${m==='fermeture'?'#fdf0ee':m==='dedoublement'?'#f0eeff':'#e8f8f5'};color:${MAP_COLORS[m]};border:1px solid ${m==='fermeture'?'#f5c9c5':m==='dedoublement'?'#c8bef5':'#a8ddd4'}">${MAP_LABELS[m]}</span>`).join('');
+  return `<div style="min-width:200px;font-family:inherit">
+    <div style="font-size:.9rem;font-weight:800;margin-bottom:.3rem">${s.nom}</div>
+    <div style="font-size:.75rem;color:#6b6560;margin-bottom:.5rem">${arrNum} arrondissement${s.ep?' · <b style="color:#c0392b">'+s.ep+'</b>':''}</div>
+    <div style="margin-bottom:.5rem">${tags}</div>
+    ${email?`<div style="font-size:.72rem;color:#6b6560"><b>Circo ${circo}</b><br><a href="mailto:${email}" style="color:#c0392b;font-weight:600;font-family:monospace">${email}</a></div>`:''}
+  </div>`;
+}
+
+function initSchoolsMap() {
+  // Leaflet already loaded via the DSDEN map initMap() function above
+  // We wait for it to be available
+  if (typeof L === 'undefined') {
+    setTimeout(initSchoolsMap, 200);
+    return;
+  }
+  schoolsLeafletMap = L.map('schools-map', { center:[43.30, 5.40], zoom:12, scrollWheelZoom:false });
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>', maxZoom:19
+  }).addTo(schoolsLeafletMap);
+
+  MAP_SCHOOLS.forEach(s => {
+    const marker = L.marker([s.lat, s.lon], { icon: makeSchoolIcon(s) });
+    marker.bindPopup(makeSchoolPopup(s), { maxWidth:260 });
+    marker.addTo(schoolsLeafletMap);
+    s._m = marker;
+  });
+}
+
+function initDsdenMap() {
+  const lat = 43.3029393, lng = 5.3782730;
+
+  const map = L.map('dsden-map', {
+    center: [lat, lng],
+    zoom: 16,
+    scrollWheelZoom: false
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap',
+    maxZoom: 19
+  }).addTo(map);
+
+  const icon = L.divIcon({
+    className: '',
+    html: `<div style="background:#c0392b;width:36px;height:36px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.35);"></div>`,
+    iconSize: [36, 36],
+    iconAnchor: [18, 36],
+    popupAnchor: [0, -38]
+  });
+
+  L.marker([lat, lng], { icon }).addTo(map)
+          .bindPopup('<strong>DSDEN 13</strong><br>28 bd Charles Nédelec<br><span style="color:#c0392b;font-weight:600">📅 Vendredi 2 avril · 8h00</span>')
+          .openPopup();
+}
+function toggleMapFilter(type) {
+  mapActive[type] = !mapActive[type];
+  document.getElementById('mf-'+type).classList.toggle('off', !mapActive[type]);
+  applyMapFilters();
+}
+
+function applyMapFilters() {
+  if (!schoolsLeafletMap) return;
+  const q = (document.getElementById('map-search')?.value || '').toLowerCase().trim();
+  MAP_SCHOOLS.forEach(s => {
+    if (!s._m) return;
+    const show = s.mesures.some(m => mapActive[m]) && (!q || s.nom.toLowerCase().includes(q));
+    if (show) { if (!schoolsLeafletMap.hasLayer(s._m)) s._m.addTo(schoolsLeafletMap); }
+    else { if (schoolsLeafletMap.hasLayer(s._m)) schoolsLeafletMap.removeLayer(s._m); }
+  });
+}
+
+// Init map after Leaflet is loaded by the DSDEN map init
+document.addEventListener('DOMContentLoaded', function () {
+  initSchoolsMap();
+  initDsdenMap();
+});
+
+</script>
+</body>
+</html>
+
 </script>
 </body>
 </html>
