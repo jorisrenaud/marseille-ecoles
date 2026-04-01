@@ -754,6 +754,7 @@ function shuffleMessage() {
   document.getElementById('field-message').value = buildMessage();
   const badge = document.getElementById('variant-badge');
   if (badge) badge.textContent = (currentVariantIdx + 1) + '/' + total;
+  updateMailtoLink();
 }
 
 function refreshMsg() { 
@@ -781,23 +782,59 @@ function closeOnBg(e) { if (e.target === document.getElementById('overlay')) clo
 
 function updateMailtoLink() {
   const msg = document.getElementById('field-message').value;
+
+  // Construire l'URL complète
   let mailto = 'mailto:' + DSDEN_EMAIL;
   if (currentCircoEmail) {
     mailto += '?cc=' + encodeURIComponent(currentCircoEmail)
-      + '&subject=' + encodeURIComponent(SUBJECT)
-      + '&body=' + encodeURIComponent(msg);
+            + '&subject=' + encodeURIComponent(SUBJECT)
+            + '&body=' + encodeURIComponent(msg);
   } else {
     mailto += '?subject=' + encodeURIComponent(SUBJECT)
-      + '&body=' + encodeURIComponent(msg);
+            + '&body=' + encodeURIComponent(msg);
   }
+
+  // Firefox mobile rejette silencieusement > ~1900 caractères
+  if (mailto.length > 1900) {
+    // Version courte sans body
+    let short = 'mailto:' + DSDEN_EMAIL;
+    if (currentCircoEmail) {
+      short += '?cc=' + encodeURIComponent(currentCircoEmail)
+             + '&subject=' + encodeURIComponent(SUBJECT);
+    } else {
+      short += '?subject=' + encodeURIComponent(SUBJECT);
+    }
+    mailto = short;
+    // Marquer que le body devra être collé
+    document.getElementById('btn-send-link').dataset.needsCopy = 'true';
+  } else {
+    document.getElementById('btn-send-link').dataset.needsCopy = 'false';
+  }
+
   const link = document.getElementById('btn-send-link');
   if (link) link.href = mailto;
 }
 
 function onMailSent() {
+  const link = document.getElementById('btn-send-link');
+  const needsCopy = link?.dataset.needsCopy === 'true';
+
+  if (needsCopy) {
+    // Copier le message dans le presse-papiers
+    const msg = document.getElementById('field-message').value;
+    navigator.clipboard.writeText(msg).catch(() => {});
+  }
+
   setTimeout(() => {
     incrementCounter();
     document.getElementById('form-view').style.display = 'none';
+    // Afficher un message adapté
+    const successP = document.querySelector('#success-view p');
+    if (successP && needsCopy) {
+      successP.innerHTML = 'Votre messagerie s\'est ouverte.<br><strong>Le message a été copié dans votre presse-papiers</strong> — collez-le dans le corps du mail.';
+    } else if (successP) {
+      successP.innerHTML = 'Votre client mail s\'est ouvert avec le message pré-rempli.<br>Vérifiez et envoyez depuis votre boîte mail.';
+    }
     document.getElementById('success-view').style.display = 'block';
   }, 300);
 }
