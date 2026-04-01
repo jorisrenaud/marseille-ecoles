@@ -834,39 +834,43 @@ function openModal() {
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
 function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
+function encodeMailBody(text) {
+  // Yahoo Mail exige CRLF (%0D%0A) plutôt que LF seul (%0A)
+  // et préfère les accents non-encodés (valides en UTF-8 dans les mailto:)
+  return encodeURIComponent(text)
+    .replace(/%0A/g, '%0D%0A')           // LF → CRLF
+    .replace(/%C3%A9/g, 'é')             // é
+    .replace(/%C3%A8/g, 'è')             // è
+    .replace(/%C3%AA/g, 'ê')             // ê
+    .replace(/%C3%AB/g, 'ë')             // ë
+    .replace(/%C3%A0/g, 'à')             // à
+    .replace(/%C3%A2/g, 'â')             // â
+    .replace(/%C3%B9/g, 'ù')             // ù
+    .replace(/%C3%BB/g, 'û')             // û
+    .replace(/%C3%B4/g, 'ô')             // ô
+    .replace(/%C3%AE/g, 'î')             // î
+    .replace(/%C3%AF/g, 'ï')             // ï
+    .replace(/%C3%BC/g, 'ü')             // ü
+    .replace(/%C3%A7/g, 'ç')             // ç
+    .replace(/%E2%80%99/g, "'")          // apostrophe courbe
+    .replace(/%E2%80%94/g, '—')          // tiret long
+    .replace(/%C3%89/g, 'É')             // É
+    .replace(/%C3%80/g, 'À')             // À
+    .replace(/%C3%88/g, 'È');            // È
+}
+
 function updateMailtoLink() {
   const msg = document.getElementById('field-message').value;
-
-  // Construire l'URL complète
   let mailto = 'mailto:' + DSDEN_EMAIL;
-  if (currentCircoEmail) {
-    mailto += '?cc=' + encodeURIComponent(currentCircoEmail)
-            + '&subject=' + encodeURIComponent(SUBJECT)
-            + '&body=' + encodeURIComponent(msg);
-  } else {
-    mailto += '?subject=' + encodeURIComponent(SUBJECT)
-            + '&body=' + encodeURIComponent(msg);
-  }
-
-  // Firefox mobile rejette silencieusement > ~1900 caractères
-  if (mailto.length > 1900) {
-    // Version courte sans body
-    let short = 'mailto:' + DSDEN_EMAIL;
-    if (currentCircoEmail) {
-      short += '?cc=' + encodeURIComponent(currentCircoEmail)
-             + '&subject=' + encodeURIComponent(SUBJECT);
-    } else {
-      short += '?subject=' + encodeURIComponent(SUBJECT);
-    }
-    mailto = short;
-    // Marquer que le body devra être collé
-    document.getElementById('btn-send-link').dataset.needsCopy = 'true';
-  } else {
-    document.getElementById('btn-send-link').dataset.needsCopy = 'false';
-  }
-
+  const params = currentCircoEmail
+    ? '?cc=' + encodeURIComponent(currentCircoEmail)
+      + '&subject=' + encodeMailBody(SUBJECT)
+      + '&body=' + encodeMailBody(msg)
+    : '?subject=' + encodeMailBody(SUBJECT)
+      + '&body=' + encodeMailBody(msg);
+  
   const link = document.getElementById('btn-send-link');
-  if (link) link.href = mailto;
+  if (link) link.href = mailto + params;
 }
 
 function onMailSent() {
