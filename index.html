@@ -681,115 +681,115 @@ let currentVariantIdx = 0;
 
 // ─── MESSAGE VARIANTS (version courte ≤ 250 car.) ──────
 const MSG_VARIANTS = [
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nJe suis parent d'élève à Marseille et je m'oppose fermement aux 43 suppressions de classes prévues pour 2026. Ces fermetures, ${sl} dégradent des conditions d'enseignement déjà difficiles. Je demande la suspension de ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n${e ? "L'école "+e+" est directement touchée par" : "Marseille est frappée par"} les 43 suppressions de classes pour 2026. Nos enfants méritent des classes à taille humaine. Je vous demande de défendre l'école publique marseillaise.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n43 classes supprimées à Marseille, dont des écoles REP+. Ces choix budgétaires aggravent les inégalités. ${e ? "L'école "+e+" est concernée." : "Aucun arrondissement n'est épargné."} Je vous demande de vous y opposer lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nJe refuse les 43 fermetures de classes annoncées à Marseille. Ce sont des choix budgétaires sans justification pédagogique. Nos enfants ont besoin de plus d'école, pas de moins. Je demande la suspension immédiate de ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nChaque fermeture de classe, c'est des effectifs qui augmentent et des enseignants surchargés. ${e ? "L'école "+e+" ne peut pas perdre une classe de plus." : "Nos écoles ne peuvent pas absorber ces suppressions."} Je vous demande de défendre ces postes au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nL'école publique n'est pas une variable d'ajustement budgétaire. ${e ? "À l'école "+e+", cette fermeture est inacceptable." : "Ces 43 fermetures à Marseille sont inacceptables."} Je vous demande de vous y opposer.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDes classes plus chargées, c'est moins d'attention par élève. ${e ? "L'école "+e+" est déjà en tension." : "Nos écoles sont déjà en tension."} Je vous demande de vous opposer aux 43 suppressions prévues pour 2026 lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes 43 suppressions touchent les quartiers populaires déjà fragilisés. ${e ? "L'école "+e+" en fait partie." : "Pas un arrondissement n'est épargné."} Ce n'est pas en retirant des moyens à l'école publique qu'on réduit les inégalités.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n43 classes supprimées alors que les besoins n'ont jamais été aussi importants. ${e ? "L'école "+e+" est concernée." : "Des dizaines d'écoles marseillaises sont concernées."} Les parents sont déterminés. Je vous demande de suspendre ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nL'école publique est le pilier de notre République. ${e ? "À "+e+", cette fermeture est vécue comme une injustice." : "Ces fermetures sont vécues comme une injustice par les familles."} Je demande le retrait de ce projet avant le CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nNos enfants ont besoin d'enseignants disponibles et de classes à effectifs raisonnables. ${e ? "L'école "+e+" ne peut pas perdre une classe." : "Ces suppressions sont insupportables pour nos écoles."} Je vous demande de porter ce refus au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDes classes surchargées, c'est des élèves qui décrochent et des enseignants épuisés. ${e ? "L'école "+e+" a besoin de plus, pas de moins." : "Nos écoles ont besoin de plus, pas de moins."} Je vous demande de défendre ces postes lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes fermetures interviennent dans des quartiers où l'école est le seul filet de protection sociale. ${e ? "L'école "+e+" en fait partie." : "Marseille ne peut pas se permettre ces suppressions."} Je vous demande de remettre en question ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n${e ? "À l'école "+e+", une classe de moins c'est des dizaines d'élèves en plus par groupe." : "Des dizaines d'élèves supplémentaires par classe, partout dans la ville."} C'est inacceptable. Je vous demande de vous opposer à ces 43 suppressions.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nFace aux 43 fermetures prévues, les parents se mobilisent. ${e ? "L'école "+e+" est touchée." : "Toute la ville est touchée."} L'éducation de nos enfants n'est pas négociable. Je vous demande d'agir lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n43 classes en moins, c'est 43 fois moins de chance pour des enfants qui en ont déjà peu. ${e ? "À l'école "+e+", chaque classe compte." : "Dans chaque école marseillaise, chaque classe compte."} Je demande le retrait de ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nSupprimer des postes en REP+, là où les élèves ont le plus besoin d'encadrement, est un non-sens pédagogique et social. ${e ? "L'école "+e+" est concernée." : ""} Je vous demande de défendre ces postes au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n${e ? "L'école "+e+" est concernée par" : "Marseille subit"} les 43 suppressions de classes pour 2026. Ces fermetures aggraveront les inégalités dans une ville qui en souffre déjà. Je vous demande d'agir.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDerrière chaque classe fermée : des enfants dans des groupes surchargés, des enseignants dépassés, des familles qui perdent confiance. Je vous demande d'intervenir pour stopper ces 43 suppressions à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCe n'est pas avec moins d'enseignants qu'on prépare nos enfants à l'avenir. ${e ? "L'école "+e+" mérite mieux." : "Nos écoles méritent mieux."} Je vous demande de rejeter ces 43 suppressions lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nL'école publique est déjà sous tension à Marseille. Retirer des moyens maintenant, c'est aggraver la situation délibérément. Je vous demande de prendre position contre ces 43 suppressions de classes.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes 43 fermetures sont le résultat d'un choix politique, pas d'une fatalité. Les familles marseillaises refusent ce choix. Je vous demande de défendre nos écoles lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n${e ? "L'école "+e+" ne doit pas perdre cette classe." : "Ces suppressions fragilisent toutes nos écoles."} Des élèves qui décrochent, des enseignants épuisés : voilà les conséquences. Je vous demande de suspendre ce projet et d'écouter les familles.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes 43 suppressions s'inscrivent dans une logique comptable qui ignore la réalité du terrain. Les familles et les enseignants le refusent. Je vous demande d'agir pour maintenir ces classes ouvertes.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nUne école publique qui ferme des classes abandonne les plus fragiles. ${e ? "L'école "+e+" ne peut pas subir ça." : "Nos écoles ne peuvent pas subir ça."} Je vous demande d'intervenir pour stopper ces 43 suppressions à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n${e ? "À l'école "+e+", ce droit est en danger." : "Le droit à une éducation de qualité est en danger à Marseille."} Nos enfants méritent des classes à effectifs raisonnables. Je vous demande de porter ce message lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes fermetures touchent les quartiers qui ont le moins et qui ont le plus besoin de l'école. C'est une injustice. Je vous demande de défendre le maintien de ces 43 classes à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nComment justifier ces suppressions alors que les besoins des élèves sont croissants ? ${e ? "L'école "+e+" en fait les frais." : "Marseille en fait les frais."} Je vous demande de vous y opposer lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDémanteler l'école publique classe après classe, c'est fragiliser des générations entières. Je vous demande de tout mettre en œuvre pour empêcher ces 43 suppressions à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDes effectifs plus lourds, c'est moins de réussite pour tous et plus d'inégalités. ${e ? "L'école "+e+" ne peut pas absorber cette perte." : "Nos écoles ne peuvent pas absorber ces pertes."} Je vous demande de rejeter ce projet lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nChaque classe fermée envoie un signal : l'État se désengage. ${e ? "L'école "+e+" n'est pas à vendre." : "Nos écoles ne sont pas à vendre."} Je demande la suspension immédiate de ces 43 suppressions à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCe projet ignore la réalité de nos quartiers : familles nombreuses, élèves qui ont besoin d'accompagnement, enseignants déjà surchargés. Je vous demande d'agir pour maintenir ces 43 postes à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nFermer des classes dans les quartiers populaires, c'est creuser un fossé qui ne se referme pas. C'est une question de justice sociale. Je vous demande de défendre nos écoles marseillaises au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes suppressions sont le résultat d'un budget d'austérité choisi. D'autres choix sont possibles. Les familles le demandent. Je vous demande de peser pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nL'école publique est ce qui nous permet de croire en l'égalité des chances. Ces 43 suppressions à Marseille la vident de son sens. Je vous demande d'agir lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\n43 fois moins de moyens pour des enfants qui en ont besoin. Ce n'est pas ainsi qu'on construit une école de la réussite. Je vous demande de suspendre et reconsidérer ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nOn parle de vraies classes, de vrais élèves, de vrais enseignants. De l'avenir de nos enfants. Je vous demande de vous opposer à ces 43 suppressions lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nInscriptions stables ou en hausse, enseignants à bout, familles sans alternative : ce projet ignore les réalités du terrain. Je vous demande de défendre nos écoles marseillaises.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes fermetures pénalisent les élèves les plus fragiles et découragent les enseignants les plus engagés. C'est contre-productif. Je vous demande d'agir pour que ce projet soit retiré.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nNos enfants n'ont pas à payer pour des décisions budgétaires qui les dépassent. Non aux 43 fermetures de classes à Marseille. Je vous demande d'intervenir au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nDerrière ces 43 suppressions : des enfants qui perdent accès à une éducation de qualité, des familles qui s'inquiètent. Je vous demande de défendre le retrait de ce projet.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nMoins de classes, c'est plus d'élèves par groupe et plus d'échec scolaire. Ce n'est pas l'école que nous défendons. Je vous demande d'agir pour préserver ces 43 postes à Marseille.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nLe projet de 43 fermetures de classes pour 2026 est inacceptable. Chaque suppression fragilise un peu plus l'école publique à Marseille. Je vous demande de vous y opposer fermement.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nL'école publique à Marseille a besoin d'investissement, pas d'austérité. Ces 43 suppressions vont dans le mauvais sens. Je vous demande de défendre nos écoles au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes décisions peuvent être revues si la pression des familles est entendue. Les parents marseillais sont mobilisés. Je vous demande de vous joindre à eux et de vous opposer à ces 43 suppressions.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes 43 postes, ce sont des chances données à des enfants. Les supprimer, c'est leur retirer ces chances. Je vous demande de défendre leur maintien lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nLa mobilisation des parents marseillais contre ces 43 suppressions est forte et déterminée. Elle ne s'arrêtera pas. Je vous demande d'entendre ce message et d'agir au CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nCes 43 suppressions traduisent un désengagement de l'État envers l'école publique marseillaise. C'est inacceptable. Je vous demande de vous y opposer lors du CDEN.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nNos enfants ont besoin de plus d'école, pas de moins. ${e ? "L'école "+e+" mérite d'être défendue." : "L'école publique marseillaise mérite d'être défendue."} Je vous demande de défendre ce principe lors du Conseil Départemental.\n\nCordialement,\n${s}`,
- 
-  (p,e,s,sl) => `Monsieur le Directeur académique,\n\nJe suis parent d'élève à Marseille. ${e ? "L'école "+e+" perd une classe." : "43 classes disparaissent dans nos écoles."} C'est une décision budgétaire brutale qui pénalise nos enfants. Je vous demande de la suspendre et d'engager une vraie concertation.\n\nCordialement,\n${s}`,
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nJe suis parent d'eleve a Marseille et je m'oppose fermement aux 43 suppressions de classes prevues pour 2026. Ces fermetures, ${sl} degradent des conditions d'enseignement deja difficiles. Je demande la suspension de ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n${e ? "L'ecole "+e+" est directement touchee par" : "Marseille est frappee par"} les 43 suppressions de classes pour 2026. Nos enfants meritent des classes a taille humaine. Je vous demande de defendre l'ecole publique marseillaise.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n43 classes supprimees a Marseille, dont des ecoles REP+. Ces choix budgetaires aggravent les inegalites. ${e ? "L'ecole "+e+" est concernee." : "Aucun arrondissement n'est epargne."} Je vous demande de vous y opposer lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nJe refuse les 43 fermetures de classes annoncees a Marseille. Ce sont des choix budgetaires sans justification pedagogique. Nos enfants ont besoin de plus d'ecole, pas de moins. Je demande la suspension immediate de ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nChaque fermeture de classe, c'est des effectifs qui augmentent et des enseignants surcharges. ${e ? "L'ecole "+e+" ne peut pas perdre une classe de plus." : "Nos ecoles ne peuvent pas absorber ces suppressions."} Je vous demande de defendre ces postes au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nL'ecole publique n'est pas une variable d'ajustement budgetaire. ${e ? "A l'ecole "+e+", cette fermeture est inacceptable." : "Ces 43 fermetures a Marseille sont inacceptables."} Je vous demande de vous y opposer.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDes classes plus chargees, c'est moins d'attention par eleve. ${e ? "L'ecole "+e+" est deja en tension." : "Nos ecoles sont deja en tension."} Je vous demande de vous opposer aux 43 suppressions prevues pour 2026 lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes 43 suppressions touchent les quartiers populaires deja fragilises. ${e ? "L'ecole "+e+" en fait partie." : "Pas un arrondissement n'est epargne."} Ce n'est pas en retirant des moyens a l'ecole publique qu'on reduit les inegalites.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n43 classes supprimees alors que les besoins n'ont jamais ete aussi importants. ${e ? "L'ecole "+e+" est concernee." : "Des dizaines d'ecoles marseillaises sont concernees."} Les parents sont determines. Je vous demande de suspendre ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nL'ecole publique est le pilier de notre Republique. ${e ? "A "+e+", cette fermeture est vecue comme une injustice." : "Ces fermetures sont vecues comme une injustice par les familles."} Je demande le retrait de ce projet avant le CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nNos enfants ont besoin d'enseignants disponibles et de classes a effectifs raisonnables. ${e ? "L'ecole "+e+" ne peut pas perdre une classe." : "Ces suppressions sont insupportables pour nos ecoles."} Je vous demande de porter ce refus au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDes classes surchargees, c'est des eleves qui decrochent et des enseignants epuises. ${e ? "L'ecole "+e+" a besoin de plus, pas de moins." : "Nos ecoles ont besoin de plus, pas de moins."} Je vous demande de defendre ces postes lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes fermetures interviennent dans des quartiers ou l'ecole est le seul filet de protection sociale. ${e ? "L'ecole "+e+" en fait partie." : "Marseille ne peut pas se permettre ces suppressions."} Je vous demande de remettre en question ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n${e ? "A l'ecole "+e+", une classe de moins c'est des dizaines d'eleves en plus par groupe." : "Des dizaines d'eleves supplementaires par classe, partout dans la ville."} C'est inacceptable. Je vous demande de vous opposer a ces 43 suppressions.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nFace aux 43 fermetures prevues, les parents se mobilisent. ${e ? "L'ecole "+e+" est touchee." : "Toute la ville est touchee."} L'education de nos enfants n'est pas negociable. Je vous demande d'agir lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n43 classes en moins, c'est 43 fois moins de chance pour des enfants qui en ont deja peu. ${e ? "A l'ecole "+e+", chaque classe compte." : "Dans chaque ecole marseillaise, chaque classe compte."} Je demande le retrait de ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nSupprimer des postes en REP+, la ou les eleves ont le plus besoin d'encadrement, est un non-sens pedagogique et social. ${e ? "L'ecole "+e+" est concernee." : ""} Je vous demande de defendre ces postes au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n${e ? "L'ecole "+e+" est concernee par" : "Marseille subit"} les 43 suppressions de classes pour 2026. Ces fermetures aggraveront les inegalites dans une ville qui en souffre deja. Je vous demande d'agir.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDerriere chaque classe fermee : des enfants dans des groupes surcharges, des enseignants depasses, des familles qui perdent confiance. Je vous demande d'intervenir pour stopper ces 43 suppressions a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCe n'est pas avec moins d'enseignants qu'on prepare nos enfants a l'avenir. ${e ? "L'ecole "+e+" merite mieux." : "Nos ecoles meritent mieux."} Je vous demande de rejeter ces 43 suppressions lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nL'ecole publique est deja sous tension a Marseille. Retirer des moyens maintenant, c'est aggraver la situation deliberement. Je vous demande de prendre position contre ces 43 suppressions de classes.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes 43 fermetures sont le resultat d'un choix politique, pas d'une fatalite. Les familles marseillaises refusent ce choix. Je vous demande de defendre nos ecoles lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n${e ? "L'ecole "+e+" ne doit pas perdre cette classe." : "Ces suppressions fragilisent toutes nos ecoles."} Des eleves qui decrochent, des enseignants epuises : voila les consequences. Je vous demande de suspendre ce projet et d'ecouter les familles.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes 43 suppressions s'inscrivent dans une logique comptable qui ignore la realite du terrain. Les familles et les enseignants le refusent. Je vous demande d'agir pour maintenir ces classes ouvertes.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nUne ecole publique qui ferme des classes abandonne les plus fragiles. ${e ? "L'ecole "+e+" ne peut pas subir ca." : "Nos ecoles ne peuvent pas subir ca."} Je vous demande d'intervenir pour stopper ces 43 suppressions a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n${e ? "A l'ecole "+e+", ce droit est en danger." : "Le droit a une education de qualite est en danger a Marseille."} Nos enfants meritent des classes a effectifs raisonnables. Je vous demande de porter ce message lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes fermetures touchent les quartiers qui ont le moins et qui ont le plus besoin de l'ecole. C'est une injustice. Je vous demande de defendre le maintien de ces 43 classes a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nComment justifier ces suppressions alors que les besoins des eleves sont croissants ? ${e ? "L'ecole "+e+" en fait les frais." : "Marseille en fait les frais."} Je vous demande de vous y opposer lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDemanteler l'ecole publique classe apres classe, c'est fragiliser des generations entieres. Je vous demande de tout mettre en oeuvre pour empecher ces 43 suppressions a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDes effectifs plus lourds, c'est moins de reussite pour tous et plus d'inegalites. ${e ? "L'ecole "+e+" ne peut pas absorber cette perte." : "Nos ecoles ne peuvent pas absorber ces pertes."} Je vous demande de rejeter ce projet lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nChaque classe fermee envoie un signal : l'Etat se desengage. ${e ? "L'ecole "+e+" n'est pas a vendre." : "Nos ecoles ne sont pas a vendre."} Je demande la suspension immediate de ces 43 suppressions a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCe projet ignore la realite de nos quartiers : familles nombreuses, eleves qui ont besoin d'accompagnement, enseignants deja surcharges. Je vous demande d'agir pour maintenir ces 43 postes a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nFermer des classes dans les quartiers populaires, c'est creuser un fosse qui ne se referme pas. C'est une question de justice sociale. Je vous demande de defendre nos ecoles marseillaises au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes suppressions sont le resultat d'un budget d'austerite choisi. D'autres choix sont possibles. Les familles le demandent. Je vous demande de peser pour que ce projet soit retire.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nL'ecole publique est ce qui nous permet de croire en l'egalite des chances. Ces 43 suppressions a Marseille la vident de son sens. Je vous demande d'agir lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\n43 fois moins de moyens pour des enfants qui en ont besoin. Ce n'est pas ainsi qu'on construit une ecole de la reussite. Je vous demande de suspendre et reconsiderer ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nOn parle de vraies classes, de vrais eleves, de vrais enseignants. De l'avenir de nos enfants. Je vous demande de vous opposer a ces 43 suppressions lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nInscriptions stables ou en hausse, enseignants a bout, familles sans alternative : ce projet ignore les realites du terrain. Je vous demande de defendre nos ecoles marseillaises.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes fermetures penalisent les eleves les plus fragiles et decouragent les enseignants les plus engages. C'est contre-productif. Je vous demande d'agir pour que ce projet soit retire.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nNos enfants n'ont pas a payer pour des decisions budgetaires qui les depassent. Non aux 43 fermetures de classes a Marseille. Je vous demande d'intervenir au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nDerriere ces 43 suppressions : des enfants qui perdent acces a une education de qualite, des familles qui s'inquietent. Je vous demande de defendre le retrait de ce projet.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nMoins de classes, c'est plus d'eleves par groupe et plus d'echec scolaire. Ce n'est pas l'ecole que nous defendons. Je vous demande d'agir pour preserver ces 43 postes a Marseille.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nLe projet de 43 fermetures de classes pour 2026 est inacceptable. Chaque suppression fragilise un peu plus l'ecole publique a Marseille. Je vous demande de vous y opposer fermement.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nL'ecole publique a Marseille a besoin d'investissement, pas d'austerite. Ces 43 suppressions vont dans le mauvais sens. Je vous demande de defendre nos ecoles au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes decisions peuvent etre revues si la pression des familles est entendue. Les parents marseillais sont mobilises. Je vous demande de vous joindre a eux et de vous opposer a ces 43 suppressions.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes 43 postes, ce sont des chances donnees a des enfants. Les supprimer, c'est leur retirer ces chances. Je vous demande de defendre leur maintien lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nLa mobilisation des parents marseillais contre ces 43 suppressions est forte et determinee. Elle ne s'arretera pas. Je vous demande d'entendre ce message et d'agir au CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nCes 43 suppressions traduisent un desengagement de l'Etat envers l'ecole publique marseillaise. C'est inacceptable. Je vous demande de vous y opposer lors du CDEN.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nNos enfants ont besoin de plus d'ecole, pas de moins. ${e ? "L'ecole "+e+" merite d'etre defendue." : "L'ecole publique marseillaise merite d'etre defendue."} Je vous demande de defendre ce principe lors du Conseil Departemental.\n\nCordialement,\n${s}`,
+
+  (p,e,s,sl) => `Monsieur le Directeur academique,\n\nJe suis parent d'eleve a Marseille. ${e ? "L'ecole "+e+" perd une classe." : "43 classes disparaissent dans nos ecoles."} C'est une decision budgetaire brutale qui penalise nos enfants. Je vous demande de la suspendre et d'engager une vraie concertation.\n\nCordialement,\n${s}`,
 ];
- 
+
 const MSG_VARIANTS_SOL = [
-  (p,e,s) => `Monsieur le Directeur académique,\n\nJe suis parent d'élève dans une école publique marseillaise non directement concernée, mais je m'oppose fermement à ces 43 suppressions. L'école publique est indivisible : ce qui touche une école nous touche tous.\n\nJe vous demande de défendre ces moyens.\n\nCordialement,\n${s}`,
- 
-  (p,e,s) => `Monsieur le Directeur académique,\n\nParent d'élève à Marseille${e ? " ("+e+")" : ""}, je m'oppose aux 43 suppressions de classes pour 2026. Ce signal inquiétant sur l'avenir de l'enseignement public nous concerne tous, pas seulement les familles directement touchées.\n\nCordialement,\n${s}`,
- 
-  (p,e,s) => `Monsieur le Directeur académique,\n\nL'école publique est un bien commun. Réduire ses moyens à Marseille, c'est fragiliser tout le tissu éducatif de la ville. ${e ? "Parent à l'école "+e+", je" : "Je"} vous demande d'agir pour que chaque enfant bénéficie des conditions qu'il mérite.\n\nCordialement,\n${s}`,
- 
-  (p,e,s) => `Monsieur le Directeur académique,\n\nMon école${e ? " ("+e+")" : ""} n'est pas dans la liste — mais je refuse de rester silencieux. Ces 43 suppressions s'attaquent à l'égalité des chances. Au nom de l'école publique, je vous demande de revenir sur ces décisions.\n\nCordialement,\n${s}`,
+  (p,e,s) => `Monsieur le Directeur academique,\n\nJe suis parent d'eleve dans une ecole publique marseillaise non directement concernee, mais je m'oppose fermement a ces 43 suppressions. L'ecole publique est indivisible : ce qui touche une ecole nous touche tous.\n\nJe vous demande de defendre ces moyens.\n\nCordialement,\n${s}`,
+
+  (p,e,s) => `Monsieur le Directeur academique,\n\nParent d'eleve a Marseille${e ? " ("+e+")" : ""}, je m'oppose aux 43 suppressions de classes pour 2026. Ce signal inquietant sur l'avenir de l'enseignement public nous concerne tous, pas seulement les familles directement touchees.\n\nCordialement,\n${s}`,
+
+  (p,e,s) => `Monsieur le Directeur academique,\n\nL'ecole publique est un bien commun. Reduire ses moyens a Marseille, c'est fragiliser tout le tissu educatif de la ville. ${e ? "Parent a l'ecole "+e+", je" : "Je"} vous demande d'agir pour que chaque enfant beneficie des conditions qu'il merite.\n\nCordialement,\n${s}`,
+
+  (p,e,s) => `Monsieur le Directeur academique,\n\nMon ecole${e ? " ("+e+")" : ""} n'est pas dans la liste - mais je refuse de rester silencieux. Ces 43 suppressions s'attaquent a l'egalite des chances. Au nom de l'ecole publique, je vous demande de revenir sur ces decisions.\n\nCordialement,\n${s}`,
 ];
 
 function buildMessage() {
