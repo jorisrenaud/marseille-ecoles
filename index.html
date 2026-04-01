@@ -570,12 +570,12 @@ function circoEmail(code) { return 'ce.' + code.toLowerCase() + '@ac-aix-marseil
 
 const DSDEN_EMAIL = "ce.ia13@ac-aix-marseille.fr";
 const SUBJECTS = [
-  "Opposition aux fermetures de classes - Rentrée 2026 - Marseille",
-  "Non aux suppressions de classes à Marseille - Rentrée 2026",
-  "Carte scolaire 2026 - Contre les fermetures de classes à Marseille",
-  "Défendons l'école publique marseillaise - Rentrée 2026",
-  "Fermetures de classes 2026 - Un parent marseillais s'oppose",
-  "Urgence scolaire à Marseille - Opposition au projet de carte 2026",
+  "Opposition aux fermetures de classes - Rentree 2026 - Marseille",
+  "Non aux suppressions de classes a Marseille - Rentree 2026",
+  "Carte scolaire 2026 - Contre les fermetures de classes",
+  "Defendons l'ecole publique marseillaise - Rentree 2026",
+  "Fermetures de classes 2026 - Un parent s'oppose",
+  "Urgence scolaire a Marseille - Opposition a la carte 2026",
 ];
   
 // ─── COUNTER ────────────────────────────────────────────
@@ -841,34 +841,35 @@ function openModal() {
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
 function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-function encodeMailBody(text) {
-  // Encodage minimal : garde les accents en UTF-8 brut (Yahoo les comprend)
-  // Encode uniquement les caractères qui cassent une URL
+function encodeMailPart(text) {
+  // Encode UNIQUEMENT ce qui casse une URL, laisse tout le reste brut
   return text
-    .replace(/\n/g, '%0D%0A')   // sauts de ligne → CRLF
-    .replace(/ /g, '%20')       // espaces
-    .replace(/&/g, '%26')       // & (casserait les paramètres)
-    .replace(/\?/g, '%3F')      // ? (casserait la query string)
-    .replace(/=/g, '%3D')       // =
-    .replace(/\+/g, '%2B')      // +
-    .replace(/#/g, '%23')       // # (ancre)
-    .replace(/</g, '%3C')
-    .replace(/>/g, '%3E');
-    // é, à, ç, –, etc. → laissés tels quels en UTF-8
+    .replace(/\r?\n/g, '%0D%0A')  // sauts de ligne
+    .replace(/ /g,     '%20')     // espaces
+    .replace(/&/g,     '%26')     // séparateur de paramètres
+    .replace(/\?/g,    '%3F')     // début de query string
+    .replace(/=/g,     '%3D')     // séparateur clé=valeur
+    .replace(/\+/g,    '%2B')     // plus
+    .replace(/#/g,     '%23');    // ancre
+  // é à ç è ù ê etc. → laissés en UTF-8 brut
 }
+
 function updateMailtoLink() {
   const msg = document.getElementById('field-message').value;
-  const SUBJECT = SUBJECTS[currentVariantIdx % SUBJECTS.length];
+  const subject = SUBJECTS[currentVariantIdx % SUBJECTS.length];
+
   let mailto = 'mailto:' + DSDEN_EMAIL;
-  const params = currentCircoEmail
-    ? '?cc=' + encodeURIComponent(currentCircoEmail)
-      + '&subject=' + encodeMailBody(SUBJECT)
-      + '&body=' + encodeMailBody(msg)
-    : '?subject=' + encodeMailBody(SUBJECT)
-      + '&body=' + encodeMailBody(msg);
-  
+  if (currentCircoEmail) {
+    mailto += '?cc='      + encodeMailPart(currentCircoEmail)
+           +  '&subject=' + encodeMailPart(subject)
+           +  '&body='    + encodeMailPart(msg);
+  } else {
+    mailto += '?subject=' + encodeMailPart(subject)
+           +  '&body='    + encodeMailPart(msg);
+  }
+
   const link = document.getElementById('btn-send-link');
-  if (link) link.href = mailto + params;
+  if (link) link.href = mailto;
 }
 
 function onMailSent() {
