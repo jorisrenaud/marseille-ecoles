@@ -569,8 +569,15 @@ schools.forEach(s => { schoolByName[s.nom] = s; });
 function circoEmail(code) { return 'ce.' + code.toLowerCase() + '@ac-aix-marseille.fr'; }
 
 const DSDEN_EMAIL = "ce.ia13@ac-aix-marseille.fr";
-const SUBJECT = "Opposition aux fermetures de classes – Rentrée 2026 – Marseille";
-
+const SUBJECTS = [
+  "Opposition aux fermetures de classes - Rentrée 2026 - Marseille",
+  "Non aux suppressions de classes à Marseille - Rentrée 2026",
+  "Carte scolaire 2026 - Contre les fermetures de classes à Marseille",
+  "Défendons l'école publique marseillaise - Rentrée 2026",
+  "Fermetures de classes 2026 - Un parent marseillais s'oppose",
+  "Urgence scolaire à Marseille - Opposition au projet de carte 2026",
+];
+  
 // ─── COUNTER ────────────────────────────────────────────
 const COUNTER_URL = 'counter.php';
 function animateCounter(from, to) {
@@ -835,32 +842,23 @@ function closeModal() { document.getElementById('overlay').classList.remove('ope
 function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
 function encodeMailBody(text) {
-  // Yahoo Mail exige CRLF (%0D%0A) plutôt que LF seul (%0A)
-  // et préfère les accents non-encodés (valides en UTF-8 dans les mailto:)
-  return encodeURIComponent(text)
-    .replace(/%0A/g, '%0D%0A')           // LF → CRLF
-    .replace(/%C3%A9/g, 'é')             // é
-    .replace(/%C3%A8/g, 'è')             // è
-    .replace(/%C3%AA/g, 'ê')             // ê
-    .replace(/%C3%AB/g, 'ë')             // ë
-    .replace(/%C3%A0/g, 'à')             // à
-    .replace(/%C3%A2/g, 'â')             // â
-    .replace(/%C3%B9/g, 'ù')             // ù
-    .replace(/%C3%BB/g, 'û')             // û
-    .replace(/%C3%B4/g, 'ô')             // ô
-    .replace(/%C3%AE/g, 'î')             // î
-    .replace(/%C3%AF/g, 'ï')             // ï
-    .replace(/%C3%BC/g, 'ü')             // ü
-    .replace(/%C3%A7/g, 'ç')             // ç
-    .replace(/%E2%80%99/g, "'")          // apostrophe courbe
-    .replace(/%E2%80%94/g, '—')          // tiret long
-    .replace(/%C3%89/g, 'É')             // É
-    .replace(/%C3%80/g, 'À')             // À
-    .replace(/%C3%88/g, 'È');            // È
+  // Encodage minimal : garde les accents en UTF-8 brut (Yahoo les comprend)
+  // Encode uniquement les caractères qui cassent une URL
+  return text
+    .replace(/\n/g, '%0D%0A')   // sauts de ligne → CRLF
+    .replace(/ /g, '%20')       // espaces
+    .replace(/&/g, '%26')       // & (casserait les paramètres)
+    .replace(/\?/g, '%3F')      // ? (casserait la query string)
+    .replace(/=/g, '%3D')       // =
+    .replace(/\+/g, '%2B')      // +
+    .replace(/#/g, '%23')       // # (ancre)
+    .replace(/</g, '%3C')
+    .replace(/>/g, '%3E');
+    // é, à, ç, –, etc. → laissés tels quels en UTF-8
 }
-
 function updateMailtoLink() {
   const msg = document.getElementById('field-message').value;
+  const SUBJECT = SUBJECTS[currentVariantIdx % SUBJECTS.length];
   let mailto = 'mailto:' + DSDEN_EMAIL;
   const params = currentCircoEmail
     ? '?cc=' + encodeURIComponent(currentCircoEmail)
