@@ -474,7 +474,7 @@
       <button class="btn-shuffle" onclick="shuffleMessage()">🔀 Autre variante <span class="variant-badge" id="variant-badge">1/50</span></button>
 
       <div class="modal-actions">
-        <button class="btn-send" onclick="sendMessage()">✉ Ouvrir dans ma messagerie</button>
+        <a class="btn-send" id="btn-send-link" href="#" onclick="onMailSent()">✉ Ouvrir dans ma messagerie</a>
         <button class="btn-copy" id="copy-msg-btn" onclick="copyMessage()">📋 Copier</button>
       </div>
     </div>
@@ -756,7 +756,10 @@ function shuffleMessage() {
   if (badge) badge.textContent = (currentVariantIdx + 1) + '/' + total;
 }
 
-function refreshMsg() { document.getElementById('field-message').value = buildMessage(); }
+function refreshMsg() { 
+  document.getElementById('field-message').value = buildMessage(); 
+  updateMailtoLink();
+}
 document.getElementById('field-prenom').addEventListener('input', refreshMsg);
 document.getElementById('field-prenom-sol').addEventListener('input', refreshMsg);
 document.getElementById('field-ecole-sol').addEventListener('input', refreshMsg);
@@ -766,6 +769,7 @@ function openModal() {
   onProfilChange();
   currentVariantIdx = Math.floor(Math.random() * MSG_VARIANTS.length);
   refreshMsg();
+  updateMailtoLink();
   const badge = document.getElementById('variant-badge');
   if (badge) badge.textContent = (currentVariantIdx + 1) + '/50';
   document.getElementById('overlay').classList.add('open');
@@ -775,26 +779,29 @@ function openModal() {
 function closeModal() { document.getElementById('overlay').classList.remove('open'); }
 function closeOnBg(e) { if (e.target === document.getElementById('overlay')) closeModal(); }
 
-function sendMessage() {
+function updateMailtoLink() {
   const msg = document.getElementById('field-message').value;
   let mailto = 'mailto:' + DSDEN_EMAIL;
   if (currentCircoEmail) {
-    mailto += '?cc=' + encodeURIComponent(currentCircoEmail) + '&subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+    mailto += '?cc=' + encodeURIComponent(currentCircoEmail)
+      + '&subject=' + encodeURIComponent(SUBJECT)
+      + '&body=' + encodeURIComponent(msg);
   } else {
-    mailto += '?subject=' + encodeURIComponent(SUBJECT) + '&body=' + encodeURIComponent(msg);
+    mailto += '?subject=' + encodeURIComponent(SUBJECT)
+      + '&body=' + encodeURIComponent(msg);
   }
+  const link = document.getElementById('btn-send-link');
+  if (link) link.href = mailto;
+}
 
-  // window.location.href est la méthode la plus compatible tous navigateurs mobiles
-  window.location.href = mailto;
-
-  // Incrément et affichage succès en différé (laisse le temps au navigateur d'ouvrir le mail)
+function onMailSent() {
   setTimeout(() => {
     incrementCounter();
     document.getElementById('form-view').style.display = 'none';
     document.getElementById('success-view').style.display = 'block';
   }, 300);
 }
-
+  
 function copyMessage() {
   navigator.clipboard.writeText(document.getElementById('field-message').value).then(() => {
     const b = document.getElementById('copy-msg-btn');
